@@ -1,6 +1,6 @@
 const { join } = require('path');
 const { skeleton } = require('@skeletonlabs/tw-plugin');
-const { myCustomTheme } = require('./src/lib'); // Import your theme
+const { LumaOriginalTheme } = require('./src/lib'); // Import your theme
 
 module.exports = {
     content: [
@@ -13,7 +13,7 @@ module.exports = {
     plugins: [
         skeleton({
             themes: {
-                custom: [myCustomTheme], // Register your theme
+                custom: [LumaOriginalTheme], // Register your theme
                 preset: ['skeleton'] // Optional: include default Skeleton theme
             }
         })
