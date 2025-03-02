@@ -1,8 +1,8 @@
 
 import type { CustomThemeConfig } from '@skeletonlabs/tw-plugin';
 
-export const myCustomTheme: CustomThemeConfig = {
-    name: 'my-custom-theme',
+export const LumaOriginalTheme: CustomThemeConfig = {
+    name: 'luma-original-theme',
     properties: {
 		// =~= Theme Properties =~=
 		"--theme-font-family-base": `system-ui`,
