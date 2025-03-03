@@ -1,0 +1,9 @@
+node_modules
+build
+dist
+.git
+.DS_Store
+npm-debug.log
+.svelte-kit
+Deckerfile
+.gitignore
