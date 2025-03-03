@@ -15,6 +15,6 @@ RUN npm run build && npm prune --production
 # COPY --from=builder --chown=node:node /app/node_modules ./node_modules
 # COPY package.json ./
 
-ENV PORT=3000
-EXPOSE 3000
+ENV PORT=5173
+EXPOSE 5173
 CMD ["node", "build"]
