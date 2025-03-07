@@ -1,6 +1,6 @@
-<!-- src/routes/+page.svelte -->
+<!-- src/routes/sign-up.svelte -->
 <script>
-    import { AppBar, Button } from '@skeletonlabs/skeleton';
+    import { AppBar, Input, Button } from '@skeletonlabs/skeleton';
 
     let email = '';
     let username = '';
@@ -9,11 +9,12 @@
     async function handleSubmit(e) {
         e.preventDefault();
         console.log({ email, username, password });
+        // Add your signup logic here
     }
 
     async function checkUserRegistration() {
         try {
-            const response = await fetch('/check-registration');
+            const response = await fetch('./check-registration');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -31,9 +32,11 @@
         }
     }
 
+    // Runs when component mounts
     checkUserRegistration();
 </script>
 
+<!-- Using Skeleton's AppBar for navigation -->
 <AppBar background="bg-gray-900" border="border-b-2 border-black">
     <svelte:fragment slot="lead">
         <h1 class="pl-2 text-white">luma</h1>
@@ -47,40 +50,52 @@
     <div class="text-center mb-[15px]">Hello User!</div>
     
     <div class="flex items-center mb-[10px] gap-2">
-        <label for="email" class="whitespace-nowrap">User email:</label>
-        <input 
-            id="email"
+        <label class="whitespace-nowrap">User email:</label>
+        <Input 
             type="text" 
             name="email" 
             placeholder="Enter your email"
             bind:value={email}
-            class="input flex-grow p-[10px] rounded-sm border border-black"
+            class="flex-grow"
         />
     </div>
     
     <div class="flex items-center mb-[10px] gap-2">
-        <label for="username" class="whitespace-nowrap">Username:</label>
-        <input 
-            id="username"
+        <label class="whitespace-nowrap">Username:</label>
+        <Input 
             type="text" 
             name="username" 
             placeholder="Enter your username"
             bind:value={username}
-            class="input flex-grow p-[10px] rounded-sm border border-black"
+            class="flex-grow"
         />
     </div>
     
     <div class="flex items-center mb-[10px] gap-2">
-        <label for="password" class="whitespace-nowrap">Password:</label>
-        <input 
-            id="password"
+        <label class="whitespace-nowrap">Password:</label>
+        <Input 
             type="password" 
             name="password" 
             placeholder="Enter your password"
             bind:value={password}
-            class="input flex-grow p-[10px] rounded-sm border border-black"
+            class="flex-grow"
         />
     </div>
     
     <Button type="submit" class="mt-2 w-full">Sign Up</Button>
 </form>
+
+
+
+
+
+
+<div class="container h-full mx-auto flex justify-center items-center">
+
+	Hello World
+	
+</div>
+
+<style lang="postcss">
+
+</style>
