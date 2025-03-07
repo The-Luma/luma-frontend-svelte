@@ -1,4 +1,4 @@
-version: '3.8'
+#version: '3.8'
 
 services:
   luma-frontend-svelte:
@@ -6,7 +6,15 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '5173:5173'
+      - '${FRONTEND_PORT}:${FRONTEND_PORT}'
     environment:
-      - PORT=5173
+      - PORT=${FRONTEND_PORT}
+      - VITE_API_URL=${FRONTEND_API_URL}
+    networks:
+      - luma-network
     restart: unless-stopped
+
+networks:
+  luma-network:
+    name: ${DOCKER_NETWORK_NAME}
+    external: true
