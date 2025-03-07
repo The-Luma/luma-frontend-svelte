@@ -1,86 +1,9 @@
-<!-- src/routes/+page.svelte -->
-<script>
-    import { AppBar, Button } from '@skeletonlabs/skeleton';
+<div class="container h-full mx-auto flex justify-center items-center">
 
-    let email = '';
-    let username = '';
-    let password = '';
+	Hello World
+	
+</div>
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-        console.log({ email, username, password });
-    }
+<style lang="postcss">
 
-    async function checkUserRegistration() {
-        try {
-            const response = await fetch('/check-registration');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-
-            if (data.registered) {
-                console.log("User registered, showing login page.");
-            } else {
-                console.log("User not registered, redirecting to sign-in.");
-                window.location.href = 'sign-in.html';
-            }
-        } catch (error) {
-            console.error('Error checking registration:', error);
-            window.location.href = 'sign-in.html';
-        }
-    }
-
-    checkUserRegistration();
-</script>
-
-<AppBar background="bg-gray-900" border="border-b-2 border-black">
-    <svelte:fragment slot="lead">
-        <h1 class="pl-2 text-white">luma</h1>
-    </svelte:fragment>
-</AppBar>
-
-<form 
-    on:submit={handleSubmit}
-    class="text-center w-[300px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-black p-5 rounded-md"
->
-    <div class="text-center mb-[15px]">Hello User!</div>
-    
-    <div class="flex items-center mb-[10px] gap-2">
-        <label for="email" class="whitespace-nowrap">User email:</label>
-        <input 
-            id="email"
-            type="text" 
-            name="email" 
-            placeholder="Enter your email"
-            bind:value={email}
-            class="input flex-grow p-[10px] rounded-sm border border-black"
-        />
-    </div>
-    
-    <div class="flex items-center mb-[10px] gap-2">
-        <label for="username" class="whitespace-nowrap">Username:</label>
-        <input 
-            id="username"
-            type="text" 
-            name="username" 
-            placeholder="Enter your username"
-            bind:value={username}
-            class="input flex-grow p-[10px] rounded-sm border border-black"
-        />
-    </div>
-    
-    <div class="flex items-center mb-[10px] gap-2">
-        <label for="password" class="whitespace-nowrap">Password:</label>
-        <input 
-            id="password"
-            type="password" 
-            name="password" 
-            placeholder="Enter your password"
-            bind:value={password}
-            class="input flex-grow p-[10px] rounded-sm border border-black"
-        />
-    </div>
-    
-    <Button type="submit" class="mt-2 w-full">Sign Up</Button>
-</form>
+</style>
