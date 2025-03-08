@@ -1,7 +1,13 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { AppShell } from '@skeletonlabs/skeleton';
+	import { AppShell, initializeStores } from '@skeletonlabs/skeleton';
+	import { Toast } from '@skeletonlabs/skeleton';
+
+	// Initialize stores
+	initializeStores();
 </script>
+
+<Toast />
 
 <div data-theme="luma-original-theme">
 	<AppShell>
