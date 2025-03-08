@@ -1,6 +1,6 @@
 <div class="container h-full mx-auto flex justify-center items-center">
 
-	Hello World, we deployed it!
+	Hello World
 	
 </div>
 
