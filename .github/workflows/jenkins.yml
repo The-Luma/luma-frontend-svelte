@@ -2,9 +2,9 @@ name: Trigger Jenkins Build
 
 on:
   push:
-    branches:
-      - sandbox
+    branches: [ sandbox ]
   workflow_dispatch:
+    branches: [ sandbox ]
 
 jobs:
   trigger-jenkins:
