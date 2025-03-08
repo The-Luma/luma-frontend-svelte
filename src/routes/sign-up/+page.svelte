@@ -1,20 +1,24 @@
-<script>
-    let email = ''; 
-    let username = '';
-    let password = '';
+<script lang="ts">
+    type SignUpForm = {
+        email: string;
+        username: string;
+        password: string;
+    };
 
-    const handleSubmit = (event) => {
+    let formData: SignUpForm = {
+        email: '',
+        username: '',
+        password: ''
+    };
+
+    const handleSubmit = (event: SubmitEvent) => {
         event.preventDefault();
-        console.log('Email:', email);
-        console.log('Username:', username);
-        console.log('Password:', password);
-
-        
+        console.log('Form data:', formData);
+        // TODO: Add API call to handle sign up
     };
 </script>
 
 <style lang="postcss">
-    @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
 </style>
 
 <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -33,9 +37,9 @@
                 <label for="email" class="block text-sm font-medium text-gray-900">Email</label>
                 <div class="mt-2">
                     <input 
-                        type="text" 
-                        id="eamil" 
-                        bind:value={email} 
+                        type="email" 
+                        id="email" 
+                        bind:value={formData.email} 
                         autocomplete="email" 
                         required
                         placeholder="Email"
@@ -49,9 +53,9 @@
                     <input 
                         type="text" 
                         id="username" 
-                        bind:value={username} 
+                        bind:value={formData.username} 
                         required
-                        placeholder="Usnername"
+                        placeholder="Username"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                     />
                 </div>
@@ -62,8 +66,8 @@
                     <input 
                         type="password" 
                         id="password" 
-                        bind:value={password} 
-                        autocomplete="current-password" 
+                        bind:value={formData.password} 
+                        autocomplete="new-password" 
                         required
                         placeholder="Password"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
