@@ -1,8 +1,11 @@
-<script>
+<script lang="ts">
+    import { getToastStore } from '@skeletonlabs/skeleton';
+
+    const toastStore = getToastStore();
     let userInput = ''; 
     let password = '';
 
-    const handleSubmit = (event) => {
+    const handleSubmit = (event: SubmitEvent) => {
         event.preventDefault();
         console.log('User Input:', userInput);
         console.log('Password:', password);
@@ -14,85 +17,60 @@
             console.log('Input is a Username');
         }
 
-        // call backend to authenticate user
-        // if successful, redirect to dashboard
-        // else, show error message
         // Mock authentication
         if (userInput === 'testuser' && password === 'password123') {
             console.log('Authentication successful');
+            toastStore.trigger({
+                message: 'Login successful!',
+                background: 'variant-filled-success'
+            });
             // Redirect to dashboard
             window.location.href = '/dashboard';
         } else {
             console.log('Authentication failed');
-            alert('Invalid username or password');
+            toastStore.trigger({
+                message: 'Invalid username or password',
+                background: 'variant-filled-error'
+            });
         }
     };
 </script>
 
-<style lang="postcss">
-    @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
-</style>
+<div class="flex justify-center items-center min-h-[100dvh]">
+    <div class="card variant-glass-surface p-8 w-[90%] max-w-[480px] space-y-8">
+        <header class="text-center space-y-4">
+            <h2 class="h2">Sign in to your account</h2>
+        </header>
 
-<div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        <!-- Replace the image to luma logo or remove the image -->
-        <img class="mx-auto h-10 w-auto" 
-            src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" 
-            alt="Your Company" />
-        <h2 class="mt-10 text-center text-2xl font-bold tracking-tight text-gray-900">
-            Sign in to your account
-        </h2>
-    </div>
-
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form class="space-y-6" on:submit={handleSubmit}>
-            <div>
-                <label for="userInput" class="block text-sm font-medium text-gray-900">Email or Username</label>
-                <div class="mt-2">
-                    <input 
-                        type="text" 
-                        id="userInput" 
-                        bind:value={userInput} 
-                        autocomplete="username" 
-                        required
-                        placeholder="Enter email or username"
-                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                    />
-                </div>
-            </div>
+            <label class="label">
+                <span>Email or Username</span>
+                <input
+                    class="input"
+                    type="text"
+                    placeholder="Enter email or username"
+                    bind:value={userInput}
+                    required
+                />
+            </label>
 
-            <div>
-                <div class="flex items-center justify-between">
-                    <label for="password" class="block text-sm font-medium text-gray-900">Password</label>
-                    <div class="text-sm">
-                        <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
-                    </div>
+            <label class="label">
+                <div class="flex justify-between items-center">
+                    <span>Password</span>
+                    <a href="/forgot-password" class="anchor">Forgot password?</a>
                 </div>
-                <div class="mt-2">
-                    <input 
-                        type="password" 
-                        id="password" 
-                        bind:value={password} 
-                        autocomplete="current-password" 
-                        required
-                        placeholder="Enter password"
-                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                    />
-                </div>
-            </div>
+                <input
+                    class="input"
+                    type="password"
+                    placeholder="Enter password"
+                    bind:value={password}
+                    required
+                />
+            </label>
 
-            <div>
-                <button 
-                    type="submit" 
-                    class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                    Sign in
-                </button>
-            </div>
+            <button type="submit" class="btn variant-filled-primary w-full">
+                Sign in
+            </button>
         </form>
-
-        <p class="mt-10 text-center text-sm text-gray-500">
-            Do not have an account?
-            <a href="./sign-up" class="font-semibold text-indigo-600 hover:text-indigo-500">Create an Account</a>
-        </p>
     </div>
 </div>
