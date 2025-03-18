@@ -1,8 +1,25 @@
-<div class="container h-full mx-auto flex justify-center items-center">
-	<div class="space-y-10 text-center flex flex-col items-center">
-		
-		Hi, it took us long to get here. Te amo, Alyn! 💖
+<script lang="ts">
+	import { isAuthenticated, isAdminSetup } from '$lib/stores/auth';
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
+	onMount(() => {
+		if (!browser) return;
+		
+		if ($isAuthenticated) {
+			goto('/me');
+		} else if (!$isAdminSetup) {
+			goto('/admin-setup');
+		} else {
+			goto('/login');
+		}
+	});
+</script>
+
+<div class="container mx-auto p-4 space-y-8">
+	<div class="flex justify-center items-center min-h-[50dvh]">
+		<span class="loading loading-spinner loading-lg"></span>
 	</div>
 </div>
 
