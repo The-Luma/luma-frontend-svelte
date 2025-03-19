@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../app.postcss';
+	import '../app.css';
 	import { AppShell, initializeStores, Toast, getToastStore } from '@skeletonlabs/skeleton';
 	import { checkServerUp, checkAuth, checkAdminSetup, setupTokenRefresh, isLoading, isAuthenticated, isServerUp } from '$lib/stores/auth';
 	import { onMount, onDestroy } from 'svelte';
