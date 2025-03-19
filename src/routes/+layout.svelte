@@ -56,7 +56,7 @@
 </script>
 
 {#if !initialized && $isLoading}
-	<div class="fixed inset-0 bg-surface-100-800/20 backdrop-blur-sm z-50">
+	<div class="fixed inset-0 bg-surface-100-800/20 backdrop-blur-xs z-50">
 		<div class="flex justify-center items-center h-full">
 			<span class="loading loading-spinner loading-lg" />
 		</div>
