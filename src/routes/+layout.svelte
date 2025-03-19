@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.css';
-	import { ToastProvider } from '@skeletonlabs/skeleton-svelte';
+	import { ToastProvider, type ToastContext } from '@skeletonlabs/skeleton-svelte';
+	import { getContext } from 'svelte';
 	import { checkServerUp, checkAuth, checkAdminSetup, setupTokenRefresh, isLoading, isAuthenticated, isServerUp } from '$lib/stores/auth';
 	import { onMount, onDestroy } from 'svelte';
 
@@ -11,9 +12,8 @@
 
 	let { children }: Props = $props();
 
-	// Initialize stores for Toast
-	initializeStores();
-	const toastStore = getToastStore();
+	// Initiaze Toast
+	export const toast: ToastContext = getContext('toast');
 
 
 	let cleanupTokenRefresh: (() => void) | undefined;
@@ -26,9 +26,10 @@
 			if (!$isServerUp) {
 				const isUp = await checkServerUp();
 				if (!isUp) {
-					toastStore.trigger({
-						message: 'Backend service is unavailable.',
-						background: 'preset-filled-error-500'
+					toast.create({
+						title: 'Error',
+						description: 'Backend service is unavailable.',
+						type: 'error'
 					});
 					return;
 				}
@@ -69,9 +70,9 @@
 {/if}
 
 
-<ToastProvider />
-<div data-theme="luma-original-theme">
-	<AppShell>
-		{@render children?.()}
-	</AppShell>
-</div>
+<ToastProvider>
+	<div data-theme="luma-original-theme">
+			{@render children?.()}
+	</div>
+</ToastProvider>
+

@@ -1,10 +1,10 @@
 <script lang="ts">
-        import { goto } from '$app/navigation';
+    import { goto } from '$app/navigation';
+    // import toast from '../+layout.svelte'
     import { api } from '$lib/services/api';
     import { auth, setupTokenRefresh } from '$lib/stores/auth';
     import type { LoginRequest } from '$lib/types/auth.types';
 
-    const toastStore = getToastStore();
     let userInput = $state(''); 
     let password = $state('');
     let isLoading = $state(false);
@@ -13,10 +13,11 @@
         event.preventDefault();
         
         if (!userInput || !password) {
-            toastStore.trigger({
-                message: 'Please fill in all fields',
-                background: 'preset-filled-error-500'
-            });
+            // toast.create({
+            //     title: 'Error',
+            //     description: 'Please fill in all fields.',
+            //     type: 'error'
+            // });
             return;
         }
 
@@ -40,20 +41,20 @@
             // Setup token refresh
             setupTokenRefresh();
             
-            toastStore.trigger({
-                message: 'Login successful!',
-                background: 'preset-filled-success-500'
-            });
+            // toastStore.trigger({
+            //     message: 'Login successful!',
+            //     background: 'preset-filled-success-500'
+            // });
 
             // Redirect immediately
             goto('/dashboard');
 
         } catch (error) {
             console.error('Login error:', error);
-            toastStore.trigger({
-                message: error instanceof Error ? error.message : 'Invalid username or password',
-                background: 'preset-filled-error-500'
-            });
+            // toastStore.trigger({
+            //     message: error instanceof Error ? error.message : 'Invalid username or password',
+            //     background: 'preset-filled-error-500'
+            // });
         } finally {
             isLoading = false;
         }

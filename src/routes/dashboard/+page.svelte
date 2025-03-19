@@ -3,7 +3,6 @@
     import { auth } from '$lib/stores/auth';
     import { onMount } from 'svelte';
 
-    const toastStore = getToastStore();
 
     // Subscribe to the auth store
     let user = $derived($auth.user);
@@ -19,17 +18,17 @@
     const handleLogout = async () => {
         try {
             await auth.logout();
-            toastStore.trigger({
-                message: 'Logged out successfully',
-                background: 'preset-filled-success-500'
-            });
+            // toastStore.trigger({
+            //     message: 'Logged out successfully',
+            //     background: 'preset-filled-success-500'
+            // });
             goto('/login');
         } catch (error) {
             console.error('Logout error:', error);
-            toastStore.trigger({
-                message: 'Error during logout',
-                background: 'preset-filled-error-500'
-            });
+            // toastStore.trigger({
+            //     message: 'Error during logout',
+            //     background: 'preset-filled-error-500'
+            // });
         }
     };
 </script>

@@ -4,7 +4,6 @@
     import { api } from '$lib/services/api';
     import type { RegisterRequest } from '$lib/types/auth.types';
 
-    const toastStore = getToastStore();
     let email = $state('');
     let username = $state('');
     let password = $state('');
@@ -15,68 +14,68 @@
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            toastStore.trigger({
-                message: 'Invalid email format',
-                background: 'preset-filled-error-500'
-            });
+            // toastStore.trigger({
+            //     message: 'Invalid email format',
+            //     background: 'preset-filled-error-500'
+            // });
             return false;
         }
 
         // Username validation
         if (username.length < 3 || username.length > 50) {
-            toastStore.trigger({
-                message: 'Username must be between 3 and 50 characters',
-                background: 'preset-filled-error-500'
-            });
+            // toastStore.trigger({
+            //     message: 'Username must be between 3 and 50 characters',
+            //     background: 'preset-filled-error-500'
+            // });
             return false;
         }
 
         // Password validation
         if (password !== confirmPassword) {
-            toastStore.trigger({
-                message: 'Passwords do not match',
-                background: 'preset-filled-error-500'
-            });
+            // toastStore.trigger({
+            //     message: 'Passwords do not match',
+            //     background: 'preset-filled-error-500'
+            // });
             return false;
         }
 
         if (password.length < 13) {
-            toastStore.trigger({
-                message: 'Password must be at least 13 characters long',
-                background: 'preset-filled-error-500'
-            });
+            // toastStore.trigger({
+            //     message: 'Password must be at least 13 characters long',
+            //     background: 'preset-filled-error-500'
+            // });
             return false;
         }
 
         if (!/[A-Z]/.test(password)) {
-            toastStore.trigger({
-                message: 'Password must contain at least one uppercase letter',
-                background: 'preset-filled-error-500'
-            });
+            // toastStore.trigger({
+            //     message: 'Password must contain at least one uppercase letter',
+            //     background: 'preset-filled-error-500'
+            // });
             return false;
         }
 
         if (!/[a-z]/.test(password)) {
-            toastStore.trigger({
-                message: 'Password must contain at least one lowercase letter',
-                background: 'preset-filled-error-500'
-            });
+            // toastStore.trigger({
+            //     message: 'Password must contain at least one lowercase letter',
+            //     background: 'preset-filled-error-500'
+            // });
             return false;
         }
 
         if (!/[0-9]/.test(password)) {
-            toastStore.trigger({
-                message: 'Password must contain at least one number',
-                background: 'preset-filled-error-500'
-            });
+            // toastStore.trigger({
+            //     message: 'Password must contain at least one number',
+            //     background: 'preset-filled-error-500'
+            // });
             return false;
         }
 
         if (!/[^A-Za-z0-9]/.test(password)) {
-            toastStore.trigger({
-                message: 'Password must contain at least one special character',
-                background: 'preset-filled-error-500'
-            });
+            // toastStore.trigger({
+            //     message: 'Password must contain at least one special character',
+            //     background: 'preset-filled-error-500'
+            // });
             return false;
         }
 
@@ -106,10 +105,10 @@
 
             isAdminSetup.set(true);
             
-            toastStore.trigger({
-                message: 'Admin account created successfully!',
-                background: 'preset-filled-success-500'
-            });
+            // toastStore.trigger({
+            //     message: 'Admin account created successfully!',
+            //     background: 'preset-filled-success-500'
+            // });
 
             // Redirect to login page after a short delay
             setTimeout(() => {
@@ -118,10 +117,10 @@
 
         } catch (error) {
             console.error('Error creating admin account:', error);
-            toastStore.trigger({
-                message: error instanceof Error ? error.message : 'Failed to create admin account',
-                background: 'preset-filled-error-500'
-            });
+            // toastStore.trigger({
+            //     message: error instanceof Error ? error.message : 'Failed to create admin account',
+            //     background: 'preset-filled-error-500'
+            // });
         } finally {
             isLoading = false;
         }
