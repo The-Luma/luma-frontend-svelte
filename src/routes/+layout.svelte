@@ -1,21 +1,34 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { AppShell, initializeStores } from '@skeletonlabs/skeleton';
-	import { Toast } from '@skeletonlabs/skeleton';
-	import { checkAuth, checkAdminSetup, setupTokenRefresh, isLoading, isAuthenticated } from '$lib/stores/auth';
+	import { AppShell, initializeStores, Toast, getToastStore } from '@skeletonlabs/skeleton';
+	import { checkServerUp, checkAuth, checkAdminSetup, setupTokenRefresh, isLoading, isAuthenticated, isServerUp } from '$lib/stores/auth';
 	import { onMount, onDestroy } from 'svelte';
+
 	import { browser } from '$app/environment';
 
-	// Initialize stores
+	// Initialize stores for Toast
 	initializeStores();
+	const toastStore = getToastStore();
+
 
 	let cleanupTokenRefresh: (() => void) | undefined;
 	let initialized = false;
 
 	async function initializeAuth() {
 		if (!browser || initialized) return;
-		
+
 		try {
+			if (!$isServerUp) {
+				const isUp = await checkServerUp();
+				if (!isUp) {
+					toastStore.trigger({
+						message: 'Backend service is unavailable.',
+						background: 'variant-filled-error'
+					});
+					return;
+				}
+			}
+
 			// Skip auth check if we're already authenticated (e.g. after login)
 			if (!$isAuthenticated) {
 				const isAuthed = await checkAuth();
@@ -50,8 +63,8 @@
 	</div>
 {/if}
 
-<Toast />
 
+<Toast />
 <div data-theme="luma-original-theme">
 	<AppShell>
 		<slot />

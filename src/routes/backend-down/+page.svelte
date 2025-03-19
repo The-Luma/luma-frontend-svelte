@@ -1,15 +1,17 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
-    import { api } from '$lib/services/api';
+    import { checkServerUp, checkAuth, checkAdminSetup } from '$lib/stores/auth';
 
     let retryCount = 0;
     const maxRetries = 5;
     const retryInterval = 5000; // 5 seconds
 
     async function checkBackend() {
-        const isUp = await api.health.check();
+        const isUp = await checkServerUp();
         if (isUp) {
+            await checkAdminSetup();
+            await checkAuth();
             goto('/');
         } else if (retryCount < maxRetries) {
             retryCount++;
