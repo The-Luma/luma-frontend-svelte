@@ -13,7 +13,7 @@
 	let { children }: Props = $props();
 
 	// Initiaze Toast
-	export const toast: ToastContext = getContext('toast');
+	// export const toast: ToastContext = getContext('toast');
 
 
 	let cleanupTokenRefresh: (() => void) | undefined;
@@ -26,11 +26,11 @@
 			if (!$isServerUp) {
 				const isUp = await checkServerUp();
 				if (!isUp) {
-					toast.create({
-						title: 'Error',
-						description: 'Backend service is unavailable.',
-						type: 'error'
-					});
+					// toast.create({
+					// 	title: 'Error',
+					// 	description: 'Backend service is unavailable.',
+					// 	type: 'error'
+					// });
 					return;
 				}
 			}
