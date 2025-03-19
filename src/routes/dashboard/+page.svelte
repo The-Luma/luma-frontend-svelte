@@ -7,8 +7,8 @@
     const toastStore = getToastStore();
 
     // Subscribe to the auth store
-    $: user = $auth.user;
-    $: isLoading = $auth.isLoading;
+    let user = $derived($auth.user);
+    let isLoading = $derived($auth.isLoading);
 
     onMount(() => {
         // If not authenticated, redirect to login
@@ -38,14 +38,14 @@
 <div class="container mx-auto p-4 space-y-8">
     <div class="flex justify-between items-center">
         <h1 class="h1">Dashboard</h1>
-        <button class="btn variant-filled-error" on:click={handleLogout}>
+        <button class="btn variant-filled-error" onclick={handleLogout}>
             Logout
         </button>
     </div>
 
     {#if isLoading}
         <div class="flex justify-center items-center h-[50vh]">
-            <div class="loading loading-spinner loading-lg" />
+            <div class="loading loading-spinner loading-lg"></div>
         </div>
     {:else if user}
         <div class="card variant-glass-surface p-6 space-y-4">

@@ -6,11 +6,11 @@
     import type { RegisterRequest } from '$lib/types/auth.types';
 
     const toastStore = getToastStore();
-    let email = '';
-    let username = '';
-    let password = '';
-    let confirmPassword = '';
-    let isLoading = false;
+    let email = $state('');
+    let username = $state('');
+    let password = $state('');
+    let confirmPassword = $state('');
+    let isLoading = $state(false);
 
     const validateForm = () => {
         // Email validation
@@ -136,7 +136,7 @@
             <p class="text-secondary">Create your admin account to get started</p>
         </header>
 
-        <form class="space-y-6" on:submit={handleSubmit}>
+        <form class="space-y-6" onsubmit={handleSubmit}>
             <label class="label">
                 <span>Email</span>
                 <input

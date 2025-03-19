@@ -5,6 +5,11 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	import { browser } from '$app/environment';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	// Initialize stores for Toast
 	initializeStores();
@@ -12,7 +17,7 @@
 
 
 	let cleanupTokenRefresh: (() => void) | undefined;
-	let initialized = false;
+	let initialized = $state(false);
 
 	async function initializeAuth() {
 		if (!browser || initialized) return;
@@ -58,7 +63,7 @@
 {#if !initialized && $isLoading}
 	<div class="fixed inset-0 bg-surface-100-800/20 backdrop-blur-xs z-50">
 		<div class="flex justify-center items-center h-full">
-			<span class="loading loading-spinner loading-lg" />
+			<span class="loading loading-spinner loading-lg"></span>
 		</div>
 	</div>
 {/if}
@@ -67,6 +72,6 @@
 <Toast />
 <div data-theme="luma-original-theme">
 	<AppShell>
-		<slot />
+		{@render children?.()}
 	</AppShell>
 </div>

@@ -6,9 +6,9 @@
     import type { LoginRequest } from '$lib/types/auth.types';
 
     const toastStore = getToastStore();
-    let userInput = ''; 
-    let password = '';
-    let isLoading = false;
+    let userInput = $state(''); 
+    let password = $state('');
+    let isLoading = $state(false);
 
     const handleSubmit = async (event: SubmitEvent) => {
         event.preventDefault();
@@ -67,7 +67,7 @@
             <h2 class="h2">Sign in to your account</h2>
         </header>
 
-        <form class="space-y-6" on:submit={handleSubmit}>
+        <form class="space-y-6" onsubmit={handleSubmit}>
             <label class="label">
                 <span>Email or Username</span>
                 <input

@@ -3,7 +3,7 @@
     import { goto } from '$app/navigation';
     import { checkServerUp, checkAuth, checkAdminSetup } from '$lib/stores/auth';
 
-    let retryCount = 0;
+    let retryCount = $state(0);
     const maxRetries = 5;
     const retryInterval = 5000; // 5 seconds
 
