@@ -1,23 +1,23 @@
 <script lang="ts">
-    import { getToastStore } from '@skeletonlabs/skeleton';
     import { goto } from '$app/navigation';
+    // import toast from '../+layout.svelte'
     import { api } from '$lib/services/api';
     import { auth, setupTokenRefresh } from '$lib/stores/auth';
     import type { LoginRequest } from '$lib/types/auth.types';
 
-    const toastStore = getToastStore();
-    let userInput = ''; 
-    let password = '';
-    let isLoading = false;
+    let userInput = $state(''); 
+    let password = $state('');
+    let isLoading = $state(false);
 
     const handleSubmit = async (event: SubmitEvent) => {
         event.preventDefault();
         
         if (!userInput || !password) {
-            toastStore.trigger({
-                message: 'Please fill in all fields',
-                background: 'variant-filled-error'
-            });
+            // toast.create({
+            //     title: 'Error',
+            //     description: 'Please fill in all fields.',
+            //     type: 'error'
+            // });
             return;
         }
 
@@ -41,20 +41,20 @@
             // Setup token refresh
             setupTokenRefresh();
             
-            toastStore.trigger({
-                message: 'Login successful!',
-                background: 'variant-filled-success'
-            });
+            // toastStore.trigger({
+            //     message: 'Login successful!',
+            //     background: 'preset-filled-success-500'
+            // });
 
             // Redirect immediately
             goto('/dashboard');
 
         } catch (error) {
             console.error('Login error:', error);
-            toastStore.trigger({
-                message: error instanceof Error ? error.message : 'Invalid username or password',
-                background: 'variant-filled-error'
-            });
+            // toastStore.trigger({
+            //     message: error instanceof Error ? error.message : 'Invalid username or password',
+            //     background: 'preset-filled-error-500'
+            // });
         } finally {
             isLoading = false;
         }
@@ -62,12 +62,12 @@
 </script>
 
 <div class="flex justify-center items-center min-h-[100dvh]">
-    <div class="card variant-glass-surface p-8 w-[90%] max-w-[480px] space-y-8">
+    <div class="card preset-tonal-surface p-8 w-[90%] max-w-[480px] space-y-8">
         <header class="text-center space-y-4">
             <h2 class="h2">Sign in to your account</h2>
         </header>
 
-        <form class="space-y-6" on:submit={handleSubmit}>
+        <form class="space-y-6" onsubmit={handleSubmit}>
             <label class="label">
                 <span>Email or Username</span>
                 <input
@@ -97,7 +97,7 @@
 
             <button 
                 type="submit" 
-                class="btn variant-filled-primary w-full"
+                class="btn preset-filled-primary-500 w-full"
                 disabled={isLoading}
             >
                 {isLoading ? 'Signing in...' : 'Sign in'}

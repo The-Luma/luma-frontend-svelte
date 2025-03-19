@@ -1,14 +1,12 @@
 <script lang="ts">
-    import { getToastStore } from '@skeletonlabs/skeleton';
-    import { goto } from '$app/navigation';
+        import { goto } from '$app/navigation';
     import { auth } from '$lib/stores/auth';
     import { onMount } from 'svelte';
 
-    const toastStore = getToastStore();
 
     // Subscribe to the auth store
-    $: user = $auth.user;
-    $: isLoading = $auth.isLoading;
+    let user = $derived($auth.user);
+    let isLoading = $derived($auth.isLoading);
 
     onMount(() => {
         // If not authenticated, redirect to login
@@ -20,17 +18,17 @@
     const handleLogout = async () => {
         try {
             await auth.logout();
-            toastStore.trigger({
-                message: 'Logged out successfully',
-                background: 'variant-filled-success'
-            });
+            // toastStore.trigger({
+            //     message: 'Logged out successfully',
+            //     background: 'preset-filled-success-500'
+            // });
             goto('/login');
         } catch (error) {
             console.error('Logout error:', error);
-            toastStore.trigger({
-                message: 'Error during logout',
-                background: 'variant-filled-error'
-            });
+            // toastStore.trigger({
+            //     message: 'Error during logout',
+            //     background: 'preset-filled-error-500'
+            // });
         }
     };
 </script>
@@ -38,17 +36,17 @@
 <div class="container mx-auto p-4 space-y-8">
     <div class="flex justify-between items-center">
         <h1 class="h1">Dashboard</h1>
-        <button class="btn variant-filled-error" on:click={handleLogout}>
+        <button class="btn preset-filled-error-500" onclick={handleLogout}>
             Logout
         </button>
     </div>
 
     {#if isLoading}
         <div class="flex justify-center items-center h-[50vh]">
-            <div class="loading loading-spinner loading-lg" />
+            <div class="loading loading-spinner loading-lg"></div>
         </div>
     {:else if user}
-        <div class="card variant-glass-surface p-6 space-y-4">
+        <div class="card preset-tonal-surface p-6 space-y-4">
             <h2 class="h2">Welcome, {user.username}!</h2>
             
             <div class="space-y-2">

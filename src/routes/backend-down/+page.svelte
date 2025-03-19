@@ -3,7 +3,7 @@
     import { goto } from '$app/navigation';
     import { checkServerUp, checkAuth, checkAdminSetup } from '$lib/stores/auth';
 
-    let retryCount = 0;
+    let retryCount = $state(0);
     const maxRetries = 5;
     const retryInterval = 5000; // 5 seconds
 
@@ -25,7 +25,7 @@
 </script>
 
 <div class="flex justify-center items-center min-h-[100dvh]">
-    <div class="card variant-glass-surface p-8 w-[90%] max-w-[480px] space-y-8">
+    <div class="card preset-tonal-surface p-8 w-[90%] max-w-[480px] space-y-8">
         <header class="text-center space-y-4">
             <h2 class="h2">Backend Service Unavailable</h2>
             <p class="text-secondary">
