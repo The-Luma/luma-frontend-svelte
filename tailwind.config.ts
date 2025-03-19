@@ -2,7 +2,6 @@ import { join } from 'path'
 import type { Config } from 'tailwindcss'
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
-import { skeleton } from '@skeletonlabs/tw-plugin'
 
 const { LumaOriginalTheme } = require('./src/lib');
 
@@ -14,18 +13,6 @@ export default {
 	},
 	plugins: [
 		forms,
-		typography,
-		skeleton({
-			themes: {
-				custom: [LumaOriginalTheme],
-				preset: [
-
-					{
-						name: 'skeleton',
-						enhancements: true,
-					},
-				],
-			},
-		}),
+		typography
 	],
 } satisfies Config;
