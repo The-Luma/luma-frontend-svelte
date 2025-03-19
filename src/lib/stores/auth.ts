@@ -14,6 +14,7 @@ export function isAdmin(user: User | null): boolean {
 }
 
 interface AuthState {
+    isServerUp: boolean;
     isAuthenticated: boolean;
     isLoading: boolean;
     user: User | null;
@@ -21,6 +22,7 @@ interface AuthState {
 
 const createAuthStore = () => {
     const { subscribe, set, update } = writable<AuthState>({
+        isServerUp: false,
         isAuthenticated: false,
         isLoading: true,
         user: null
@@ -28,6 +30,9 @@ const createAuthStore = () => {
 
     return {
         subscribe,
+        setServerUp: (serverUp: boolean) => {
+            update(state => ({ ...state, isServerUp: serverUp }));
+        },
         setAuthenticated: (authenticated: boolean) => {
             update(state => ({ ...state, isAuthenticated: authenticated }));
         },
@@ -43,7 +48,7 @@ const createAuthStore = () => {
             } catch (error) {
                 console.error('Error during logout:', error);
             } finally {
-                set({ isAuthenticated: false, isLoading: false, user: null });
+                set({ isServerUp: false, isAuthenticated: false, isLoading: false, user: null });
             }
         }
     };
@@ -52,6 +57,7 @@ const createAuthStore = () => {
 export const auth = createAuthStore();
 
 // Derived stores for convenience
+export const isServerUp = derived(auth, $auth => $auth.isServerUp);
 export const isAuthenticated = derived(auth, $auth => $auth.isAuthenticated);
 export const isLoading = derived(auth, $auth => $auth.isLoading);
 export const user = derived(auth, $auth => $auth.user);
@@ -75,8 +81,20 @@ export async function checkAdminSetup() {
     }
 }
 
+export async function checkServerUp(): Promise<boolean> {
+    try {
+        const up = await api.health.check();
+        auth.setServerUp(up ?? false);
+        return up ?? false;
+    } catch (error) {
+        console.error('Error checking server up:', error);
+        auth.setServerUp(false);
+        return false;
+    }
+}
+
 // Function to check authentication status
-export async function checkAuth() {
+export async function checkAuth(): Promise<boolean> {
     auth.setLoading(true);
     try {
         const response = await api.auth.me();

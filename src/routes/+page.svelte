@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { isAuthenticated, isAdminSetup } from '$lib/stores/auth';
+	import { isServerUp, isAuthenticated, isAdminSetup } from '$lib/stores/auth';
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
 		if (!browser) return;
-		
-		if ($isAuthenticated) {
+
+		if (!$isServerUp) {
+			goto('/backend-down');
+		} else if ($isAuthenticated) {
 			goto('/me');
 		} else if (!$isAdminSetup) {
 			goto('/admin-setup');
