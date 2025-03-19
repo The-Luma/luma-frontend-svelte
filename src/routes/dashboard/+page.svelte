@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { getToastStore } from '@skeletonlabs/skeleton';
-    import { goto } from '$app/navigation';
+        import { goto } from '$app/navigation';
     import { auth } from '$lib/stores/auth';
     import { onMount } from 'svelte';
 
@@ -22,14 +21,14 @@
             await auth.logout();
             toastStore.trigger({
                 message: 'Logged out successfully',
-                background: 'variant-filled-success'
+                background: 'preset-filled-success-500'
             });
             goto('/login');
         } catch (error) {
             console.error('Logout error:', error);
             toastStore.trigger({
                 message: 'Error during logout',
-                background: 'variant-filled-error'
+                background: 'preset-filled-error-500'
             });
         }
     };
@@ -38,7 +37,7 @@
 <div class="container mx-auto p-4 space-y-8">
     <div class="flex justify-between items-center">
         <h1 class="h1">Dashboard</h1>
-        <button class="btn variant-filled-error" onclick={handleLogout}>
+        <button class="btn preset-filled-error-500" onclick={handleLogout}>
             Logout
         </button>
     </div>
@@ -48,7 +47,7 @@
             <div class="loading loading-spinner loading-lg"></div>
         </div>
     {:else if user}
-        <div class="card variant-glass-surface p-6 space-y-4">
+        <div class="card preset-tonal-surface p-6 space-y-4">
             <h2 class="h2">Welcome, {user.username}!</h2>
             
             <div class="space-y-2">

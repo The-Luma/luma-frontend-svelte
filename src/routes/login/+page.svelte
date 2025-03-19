@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { getToastStore } from '@skeletonlabs/skeleton';
-    import { goto } from '$app/navigation';
+        import { goto } from '$app/navigation';
     import { api } from '$lib/services/api';
     import { auth, setupTokenRefresh } from '$lib/stores/auth';
     import type { LoginRequest } from '$lib/types/auth.types';
@@ -16,7 +15,7 @@
         if (!userInput || !password) {
             toastStore.trigger({
                 message: 'Please fill in all fields',
-                background: 'variant-filled-error'
+                background: 'preset-filled-error-500'
             });
             return;
         }
@@ -43,7 +42,7 @@
             
             toastStore.trigger({
                 message: 'Login successful!',
-                background: 'variant-filled-success'
+                background: 'preset-filled-success-500'
             });
 
             // Redirect immediately
@@ -53,7 +52,7 @@
             console.error('Login error:', error);
             toastStore.trigger({
                 message: error instanceof Error ? error.message : 'Invalid username or password',
-                background: 'variant-filled-error'
+                background: 'preset-filled-error-500'
             });
         } finally {
             isLoading = false;
@@ -62,7 +61,7 @@
 </script>
 
 <div class="flex justify-center items-center min-h-[100dvh]">
-    <div class="card variant-glass-surface p-8 w-[90%] max-w-[480px] space-y-8">
+    <div class="card preset-tonal-surface p-8 w-[90%] max-w-[480px] space-y-8">
         <header class="text-center space-y-4">
             <h2 class="h2">Sign in to your account</h2>
         </header>
@@ -97,7 +96,7 @@
 
             <button 
                 type="submit" 
-                class="btn variant-filled-primary w-full"
+                class="btn preset-filled-primary-500 w-full"
                 disabled={isLoading}
             >
                 {isLoading ? 'Signing in...' : 'Sign in'}

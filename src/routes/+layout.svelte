@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { AppShell, initializeStores, Toast, getToastStore } from '@skeletonlabs/skeleton';
+	import { ToastProvider } from '@skeletonlabs/skeleton-svelte';
 	import { checkServerUp, checkAuth, checkAdminSetup, setupTokenRefresh, isLoading, isAuthenticated, isServerUp } from '$lib/stores/auth';
 	import { onMount, onDestroy } from 'svelte';
 
@@ -28,7 +28,7 @@
 				if (!isUp) {
 					toastStore.trigger({
 						message: 'Backend service is unavailable.',
-						background: 'variant-filled-error'
+						background: 'preset-filled-error-500'
 					});
 					return;
 				}
@@ -69,7 +69,7 @@
 {/if}
 
 
-<Toast />
+<ToastProvider />
 <div data-theme="luma-original-theme">
 	<AppShell>
 		{@render children?.()}
