@@ -30,7 +30,7 @@
 </script>
 
 <style lang="postcss">
-    @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+        
 </style>
 
 <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
