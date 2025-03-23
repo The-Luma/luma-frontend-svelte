@@ -26,7 +26,7 @@
             toast.create({
                 title: 'Error',
                 description: 'Invalid email format',
-                type: 'error',
+                type: 'error'
             });
             return false;
         }
@@ -40,7 +40,7 @@
             toast.create({
                 title: 'Error',
                 description: 'Username must be between 3 and 50 characters',
-                type: 'error',
+                type: 'error'
             });
             return false;
         }
@@ -54,7 +54,7 @@
             toast.create({
                 title: 'Error',
                 description: 'Passwords do not match',
-                type: 'error',
+                type: 'error'
             });
             return false;
         }
@@ -67,7 +67,7 @@
             toast.create({
                 title: 'Error',
                 description: 'Password must be at least 13 characters long',
-                type: 'error',
+                type: 'error'
             });
             return false;
         }
@@ -80,7 +80,7 @@
             toast.create({
                 title: 'Error',
                 description: 'Password must contain at least one uppercase letter',
-                type: 'error',
+                type: 'error'
             });
             return false;
         }
@@ -93,7 +93,7 @@
             toast.create({
                 title: 'Error',
                 description: 'Password must contain at least one lowercase letter',
-                type: 'error',
+                type: 'error'
             });
             return false;
         }
@@ -106,7 +106,7 @@
             toast.create({
                 title: 'Error',
                 description: 'Password must contain at least one number',
-                type: 'error',
+                type: 'error'
             });
             return false;
         }
@@ -119,7 +119,7 @@
             toast.create({
                 title: 'Error',
                 description: 'Password must contain at least one special character',
-                type: 'error',
+                type: 'error'
             });
             return false;
         }
@@ -154,6 +154,11 @@
             //     message: 'Admin account created successfully!',
             //     background: 'preset-filled-success-500'
             // });
+            toast.create({
+                title: 'Success',
+                description: 'Admin account created successfully!',
+                type: 'success',
+            });
 
             // Redirect to login page after a short delay
             setTimeout(() => {
@@ -192,7 +197,6 @@
                     type="email"
                     placeholder="Enter your email"
                     bind:value={email}
-                    
                     disabled={isLoading}
                 />
             </label>
