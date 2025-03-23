@@ -15,7 +15,6 @@
 	// Initiaze Toast
 	// export const toast: ToastContext = getContext('toast');
 
-
 	let cleanupTokenRefresh: (() => void) | undefined;
 	let initialized = $state(false);
 
@@ -52,6 +51,16 @@
 
 	onMount(() => {
 		initializeAuth();
+		// Apply saved theme on mount
+		const savedTheme = localStorage.getItem('theme');
+		if (savedTheme) {
+			document.documentElement.setAttribute('data-theme', savedTheme);
+		}
+		// Apply saved dark mode
+		const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+		if (savedDarkMode) {
+			document.documentElement.classList.add('dark');
+		}
 	});
 
 	onDestroy(() => {
@@ -61,6 +70,12 @@
 	});
 </script>
 
+<svelte:head>
+	<style>
+		@custom-variant dark (&:where(.dark, .dark *));
+	</style>
+</svelte:head>
+
 {#if !initialized && $isLoading}
 	<div class="fixed inset-0 bg-surface-100-800/20 backdrop-blur-xs z-50">
 		<div class="flex justify-center items-center h-full">
@@ -69,10 +84,9 @@
 	</div>
 {/if}
 
-
 <ToastProvider>
-	<div data-theme="luma-original-theme">
-			{@render children?.()}
+	<div>
+		{@render children?.()}
 	</div>
 </ToastProvider>
 

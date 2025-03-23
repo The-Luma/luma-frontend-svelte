@@ -62,18 +62,18 @@
 </script>
 
 <div class="flex justify-center items-center min-h-[100dvh]">
-    <div class="card preset-tonal-surface p-8 w-[90%] max-w-[480px] space-y-8">
+    <div class="card preset-filled-surface-100-900 border-surface-200-800 p-8 w-[90%] max-w-[480px] space-y-8">
         <header class="text-center space-y-4">
-            <h2 class="h2">Sign in to your account</h2>
+            <h2 class="h2">Sign in</h2>
         </header>
 
         <form class="space-y-6" onsubmit={handleSubmit}>
             <label class="label">
-                <span>Email or Username</span>
+                <span>Username</span>
                 <input
                     class="input"
                     type="text"
-                    placeholder="Enter email or username"
+                    placeholder="Enter username"
                     bind:value={userInput}
                     required
                     disabled={isLoading}
