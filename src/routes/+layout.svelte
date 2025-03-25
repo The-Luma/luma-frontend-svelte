@@ -72,7 +72,7 @@
 
 <svelte:head>
 	<style>
-		@custom-variant dark (&:where(.dark, .dark *));
+      @custom-variant dark (&:is(.dark *));
 	</style>
 </svelte:head>
 

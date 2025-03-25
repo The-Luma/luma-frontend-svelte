@@ -24,7 +24,7 @@
 @import "@skeletonlabs/skeleton/themes/vox";
 @import "@skeletonlabs/skeleton/themes/wintry";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:is(.dark *));
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
