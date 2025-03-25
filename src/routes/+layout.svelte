@@ -4,8 +4,9 @@
 	import { getContext } from 'svelte';
 	import { checkServerUp, checkAuth, checkAdminSetup, setupTokenRefresh, isLoading, isAuthenticated, isServerUp } from '$lib/stores/auth';
 	import { onMount, onDestroy } from 'svelte';
-
+	import { initializeTheme } from '$lib/stores/theme';
 	import { browser } from '$app/environment';
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -50,7 +51,6 @@
 	}
 
 	onMount(() => {
-		initializeAuth();
 		// Apply saved theme on mount
 		const savedTheme = localStorage.getItem('theme');
 		if (savedTheme) {
@@ -61,6 +61,8 @@
 		if (savedDarkMode) {
 			document.documentElement.classList.add('dark');
 		}
+		initializeAuth();
+		initializeTheme();
 	});
 
 	onDestroy(() => {
@@ -72,7 +74,7 @@
 
 <svelte:head>
 	<style>
-      @custom-variant dark (&:is(.dark *));
+  		@custom-variant dark (&:where(.dark, .dark *));
 	</style>
 </svelte:head>
 

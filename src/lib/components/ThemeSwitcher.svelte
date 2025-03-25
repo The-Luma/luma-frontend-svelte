@@ -1,34 +1,11 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import { onMount } from 'svelte';
 	import themeSwitcherIcon from '$lib/assets/icons/theme-switcher.svg';
+	import { currentTheme, isDarkMode, themes, setTheme, toggleDarkMode } from '$lib/stores/theme';
 
-	// Available themes
-	const themes = [
-		'catppuccin', 'cerberus', 'concord', 'crimson', 'fennec',
-		'hamlindigo', 'legacy', 'mint', 'modern', 'mona',
-		'nosh', 'nouveau', 'pine', 'reign', 'rocket',
-		'rose', 'sahara', 'seafoam', 'terminus', 'vintage',
-		'vox', 'wintry'
-	];
-
-	const currentTheme = writable('terminus');
-	const isDarkMode = writable(false);
-
-	function changeTheme(event: Event) {
+	function handleThemeChange(event: Event) {
 		const theme = (event.target as HTMLSelectElement).value;
-		currentTheme.set(theme);
-		document.documentElement.setAttribute('data-theme', theme);
-		localStorage.setItem('theme', theme);
-	}
-
-	function toggleDarkMode() {
-		isDarkMode.update(mode => {
-			const newMode = !mode;
-			document.documentElement.classList.toggle('dark', newMode);
-			localStorage.setItem('darkMode', String(newMode));
-			return newMode;
-		});
+		setTheme(theme);
 	}
 
 	onMount(() => {
@@ -47,7 +24,7 @@
 	<select
 		class="select variant-filled-surface"
 		bind:value={$currentTheme}
-		on:change={changeTheme}
+		on:change={handleThemeChange}
 	>
 		{#each themes as theme}
 			<option value={theme}>{theme}</option>
@@ -69,11 +46,6 @@
 </div>
 
 <style>
-    	.icon svg {
-		/* Change the color here, e.g., to blue */
-		fill: blue;
-		transition: transform 0.3s ease;
-	}
 	img {
 		transition: transform 0.3s ease;
 	}

@@ -66,7 +66,6 @@
         <header class="text-center space-y-4">
             <h2 class="h2">Sign in</h2>
         </header>
-
         <form class="space-y-6" onsubmit={handleSubmit}>
             <label class="label">
                 <span>Username</span>
