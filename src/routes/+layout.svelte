@@ -55,6 +55,11 @@
 		}
 	}
 
+	function handleDashboardHome() {
+		currentRoute = '';
+		goto('/dashboard');
+	}
+
 	async function handleLogout() {
 		try {
 			await auth.logout();
@@ -138,7 +143,7 @@
 			<header class="bg-surface-100-800 border-b border-surface-200-700">
 				<div class="flex items-center justify-between px-4 py-2">
 					<div class="flex items-center gap-4">
-						<button class="btn variant-ghost-surface" on:click={() => goto('/dashboard')}>
+						<button class="btn variant-ghost-surface" on:click={handleDashboardHome}>
 							<h1 class="h2">Luma</h1>
 						</button>
 					</div>
