@@ -10,7 +10,7 @@
 		if (!$isServerUp) {
 			goto('/backend-down');
 		} else if ($isAuthenticated) {
-			goto('/me');
+			goto('/dashboard');
 		} else if (!$isAdminSetup) {
 			goto('/admin-setup');
 		} else {
