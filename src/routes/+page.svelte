@@ -10,7 +10,7 @@
 		if (!$isServerUp) {
 			goto('/backend-down');
 		} else if ($isAuthenticated) {
-			goto('/me');
+			goto('/dashboard');
 		} else if (!$isAdminSetup) {
 			goto('/admin-setup');
 		} else {
@@ -19,7 +19,7 @@
 	});
 </script>
 
-<div class="container mx-auto p-4 space-y-8">
+<div class=" mx-auto p-4 space-y-8">
 	<div class="flex justify-center items-center min-h-[50dvh]">
 		<span class="loading loading-spinner loading-lg"></span>
 	</div>
