@@ -64,7 +64,7 @@
 <div class="flex justify-center items-center min-h-[100dvh]">
     <div class="card preset-filled-surface-100-900 border-surface-200-800 p-8 w-[90%] max-w-[480px] space-y-8">
         <header class="text-center space-y-4">
-            <h2 class="h2">Hello there</h2>
+            <h2 class="h2">Sign in</h2>
         </header>
         <form class="space-y-6" onsubmit={handleSubmit}>
             <label class="label">
