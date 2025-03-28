@@ -4,6 +4,11 @@
     import { api } from '$lib/services/api';
     import { auth, setupTokenRefresh } from '$lib/stores/auth';
     import type { LoginRequest } from '$lib/types/auth.types';
+    import { getContext } from 'svelte';
+    import type { ToastContext } from '@skeletonlabs/skeleton-svelte';
+
+    export const toast: ToastContext = getContext('toast');
+
 
     let userInput = $state(''); 
     let password = $state('');
@@ -13,11 +18,11 @@
         event.preventDefault();
         
         if (!userInput || !password) {
-            // toast.create({
-            //     title: 'Error',
-            //     description: 'Please fill in all fields.',
-            //     type: 'error'
-            // });
+            toast.create({
+                title: 'Error',
+                description: 'Please fill in all fields.',
+                type: 'error'
+            });
             return;
         }
 
@@ -55,6 +60,11 @@
             //     message: error instanceof Error ? error.message : 'Invalid username or password',
             //     background: 'preset-filled-error-500'
             // });
+            toast.create({
+                title: 'Error',
+                description: error instanceof Error ? error.message : 'Invalid username or password.',
+                type: 'error'
+            });
         } finally {
             isLoading = false;
         }
