@@ -1,8 +1,13 @@
 <script lang="ts">
-        import { goto } from '$app/navigation';
+    import { goto } from '$app/navigation';
     import { isAdminSetup } from '$lib/stores/auth';
     import { api } from '$lib/services/api';
     import type { RegisterRequest } from '$lib/types/auth.types';
+    import { getContext } from 'svelte';
+    import type { ToastContext } from '@skeletonlabs/skeleton-svelte';
+
+    export const toast: ToastContext = getContext('toast');
+
 
     let email = $state('');
     let username = $state('');
@@ -18,6 +23,11 @@
             //     message: 'Invalid email format',
             //     background: 'preset-filled-error-500'
             // });
+            toast.create({
+                title: 'Error',
+                description: 'Invalid email format',
+                type: 'error'
+            });
             return false;
         }
 
@@ -27,6 +37,11 @@
             //     message: 'Username must be between 3 and 50 characters',
             //     background: 'preset-filled-error-500'
             // });
+            toast.create({
+                title: 'Error',
+                description: 'Username must be between 3 and 50 characters',
+                type: 'error'
+            });
             return false;
         }
 
@@ -36,6 +51,11 @@
             //     message: 'Passwords do not match',
             //     background: 'preset-filled-error-500'
             // });
+            toast.create({
+                title: 'Error',
+                description: 'Passwords do not match',
+                type: 'error'
+            });
             return false;
         }
 
@@ -44,6 +64,11 @@
             //     message: 'Password must be at least 13 characters long',
             //     background: 'preset-filled-error-500'
             // });
+            toast.create({
+                title: 'Error',
+                description: 'Password must be at least 13 characters long',
+                type: 'error'
+            });
             return false;
         }
 
@@ -52,6 +77,11 @@
             //     message: 'Password must contain at least one uppercase letter',
             //     background: 'preset-filled-error-500'
             // });
+            toast.create({
+                title: 'Error',
+                description: 'Password must contain at least one uppercase letter',
+                type: 'error'
+            });
             return false;
         }
 
@@ -60,6 +90,11 @@
             //     message: 'Password must contain at least one lowercase letter',
             //     background: 'preset-filled-error-500'
             // });
+            toast.create({
+                title: 'Error',
+                description: 'Password must contain at least one lowercase letter',
+                type: 'error'
+            });
             return false;
         }
 
@@ -68,6 +103,11 @@
             //     message: 'Password must contain at least one number',
             //     background: 'preset-filled-error-500'
             // });
+            toast.create({
+                title: 'Error',
+                description: 'Password must contain at least one number',
+                type: 'error'
+            });
             return false;
         }
 
@@ -76,6 +116,11 @@
             //     message: 'Password must contain at least one special character',
             //     background: 'preset-filled-error-500'
             // });
+            toast.create({
+                title: 'Error',
+                description: 'Password must contain at least one special character',
+                type: 'error'
+            });
             return false;
         }
 
@@ -109,6 +154,11 @@
             //     message: 'Admin account created successfully!',
             //     background: 'preset-filled-success-500'
             // });
+            toast.create({
+                title: 'Success',
+                description: 'Admin account created successfully!',
+                type: 'success',
+            });
 
             // Redirect to login page after a short delay
             setTimeout(() => {
@@ -121,13 +171,18 @@
             //     message: error instanceof Error ? error.message : 'Failed to create admin account',
             //     background: 'preset-filled-error-500'
             // });
+            toast.create({
+                title: 'Error',
+                description: error instanceof Error ? error.message : 'Failed to create admin account',
+                type: 'error',
+            });
         } finally {
             isLoading = false;
         }
     };
-</script>
+    </script>
 
-<div class="flex justify-center items-center min-h-[100dvh]">
+    <div class="flex justify-center items-center min-h-[100dvh]">
     <div class="card preset-tonal-surface p-8 w-[90%] max-w-[480px] space-y-8">
         <header class="text-center space-y-4">
             <h2 class="h2">Welcome to Luma!</h2>
@@ -142,7 +197,6 @@
                     type="email"
                     placeholder="Enter your email"
                     bind:value={email}
-                    required
                     disabled={isLoading}
                 />
             </label>
@@ -154,7 +208,7 @@
                     type="text"
                     placeholder="Choose a username (3-50 characters)"
                     bind:value={username}
-                    required
+                    
                     disabled={isLoading}
                 />
             </label>
@@ -166,7 +220,7 @@
                     type="password"
                     placeholder="Create a password (min 13 chars, 1 uppercase, 1 lowercase, 1 number, 1 special)"
                     bind:value={password}
-                    required
+                    
                     disabled={isLoading}
                 />
             </label>
@@ -178,7 +232,7 @@
                     type="password"
                     placeholder="Confirm your password"
                     bind:value={confirmPassword}
-                    required
+                    
                     disabled={isLoading}
                 />
             </label>
