@@ -27,4 +27,12 @@ export class AuthService extends BaseService {
     async check(): Promise<ApiResponse<{ authenticated: boolean }>> {
         return this.get<{ authenticated: boolean }>(API_CONFIG.endpoints.auth.check);
     }
+
+    async changeUsername(username: string): Promise<ApiResponse<UserResponse>> {
+        return this.put<UserResponse>(API_CONFIG.endpoints.auth.changeUsername, { username });
+    }
+
+    async changePassword(password: string): Promise<ApiResponse<void>> {
+        return this.put<void>(API_CONFIG.endpoints.auth.changePassword, { password });
+    }
 } 
