@@ -10,7 +10,7 @@
 
     export const toast: ToastContext = getContext('toast');
 
-    const selectedTab = writable('admin');
+    let selectedTab = $state('user');
     let email = $state('');
     let username = $state('');
     let password = $state('');
@@ -74,18 +74,20 @@
 
 {#if isAdmin}
     <div class="card p-4 preset-filled-surface-100-900 border-[1px] border-surface-200-800 w-full max-w-md">
-        <Tabs value={$selectedTab} on:change={(e) => selectedTab.set(e.detail.value)}>
+        <Tabs value={selectedTab} onValueChange={(e) => (selectedTab = e.value)}>
             {#snippet list()}
-                <Tabs.Control value="user">User Settings</Tabs.Control>
+                <Tabs.Control value="user" >User Settings</Tabs.Control>
                 <Tabs.Control value="admin">User Management</Tabs.Control>
             {/snippet}
             {#snippet content()}
                 <Tabs.Panel value="user">
-                    <div class="space-y-4">
-                        <h1 class="h1">User Settings</h1>
+                    <div class="card p-4 preset-filled-surface-100-900 border-[1px] border-surface-200-800 w-full max-w-md">
+                        <h1 class="h1">Settings</h1>
+                        <br />
                         <hr class="hr" />
+                        <br />
                         
-                        <div class='grid gap-4 grid-cols-3 gap-4'>
+                        <div class='grid gap-4 grid-cols-3 gap-4' >
                             <div class="col-span-3 grid grid-cols-subgrid">
                                 <h3 class='h6'>Email</h3>
                                 <p class='text-sm text-gray-500'>{email}</p>
@@ -94,13 +96,14 @@
                             <h3 class='h6'>Username</h3>
                             <p class="text-sm text-gray-500" id='username'>{username}</p>
                             <button type="button" class="btn btn-sm preset-filled" id='change_username'>Change Username</button>
-
+                
                             <h3 class='h6'>Password</h3>
                             <p class="text-sm text-gray-500" id='password'>{password}</p>
                             <button type="button" class="btn btn-sm preset-filled" id='change_password'>Change Password</button>
                         </div>
-
-                        <hr class="hr" />
+                
+                        <hr class="hr my-8" />
+                        
                         <div class="flex justify-center">
                             <!-- svelte-ignore event_directive_deprecated -->
                             <button class="btn preset-filled-error-500 w-full" on:click={handleLogout}>
@@ -186,6 +189,7 @@
         <hr class="hr my-8" />
         
         <div class="flex justify-center">
+            <!-- svelte-ignore event_directive_deprecated -->
             <button class="btn preset-filled-error-500 w-full" on:click={handleLogout}>
                 Logout
             </button>
