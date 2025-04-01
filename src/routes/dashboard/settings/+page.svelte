@@ -15,14 +15,20 @@
     let username = $state('');
     let password = $state('');
     let isAdmin = $state(false);
+
     let usernameModalState = $state(false);
     let newUsername = $state('');
+    
     let passwordModalState = $state(false);
     let currentPassword = $state('');
     let newPassword = $state('');
     let confirmPassword = $state('');
     let isUpdatingPassword = $state(false);
     
+    let inviteModalState = $state(false);
+    let inviteEmail = $state('');
+    let inviteRole = $state('Viewer');
+    let isInviting = $state(false);
 
     function userModalClose() {
         usernameModalState = false;
@@ -30,11 +36,14 @@
 
     function passwordModalClose() {
         passwordModalState = false;
-        currentPassword = '';
-        newPassword = '';
-        confirmPassword = '';
     }
     
+    function inviteModalClose() {
+        inviteModalState = false;
+        inviteEmail = '';
+        inviteRole = 'Viewer';
+    }
+
     // Dummy data for users
     let users = $state([
         { id: 1, name: 'John Doe', role: 'Admin' },
@@ -52,12 +61,44 @@
         }
     });
 
-    const inviteUser = () => {
-        toast.create({
-            title: 'Info',
-            description: 'Invite user functionality coming soon',
-            type: 'info'
-        });
+    const inviteUser = async () => {
+        if (!inviteEmail.trim()) {
+            toast.create({
+                title: 'Error',
+                description: 'Email is required',
+                type: 'error'
+            });
+            return;
+        }
+
+        isInviting = true;
+        try {
+            // TODO: Implement actual invite API call
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+            
+            // Add new user to the list (temporary)
+            users = [...users, {
+                id: users.length + 1,
+                name: inviteEmail.split('@')[0],
+                role: inviteRole
+            }];
+
+            toast.create({
+                title: 'Success',
+                description: 'User invited successfully',
+                type: 'success'
+            });
+            inviteModalClose();
+        } catch (error) {
+            console.error('Error inviting user:', error);
+            toast.create({
+                title: 'Error',
+                description: 'Failed to invite user. Please try again.',
+                type: 'error'
+            });
+        } finally {
+            isInviting = false;
+        }
     };
 
     const changeRole = (userId: number, newRole: string) => {
@@ -72,13 +113,44 @@
         }
     };
 
-    const removeUser = (userId: number) => {
-        users = users.filter(u => u.id !== userId);
-        toast.create({
-            title: 'Success',
-            description: 'User removed successfully',
-            type: 'success'
-        });
+    const removeUser = async (userId: number) => {
+        try {
+            // Check if trying to delete own account
+            if (userId === $auth.user?.id) {
+                toast.create({
+                    title: 'Error',
+                    description: 'You cannot delete your own account',
+                    type: 'error'
+                });
+                return;
+            }
+
+            const response = await fetch(`/api/users/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete user');
+            }
+
+            users = users.filter(u => u.id !== userId);
+            
+            toast.create({
+                title: 'Success',
+                description: 'User removed successfully',
+                type: 'success'
+            });
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            toast.create({
+                title: 'Error',
+                description: 'Failed to delete user. Please try again.',
+                type: 'error'
+            });
+        }
     };
 
     const handleLogout = async () => {
@@ -149,7 +221,7 @@
                         
                         <div class="flex justify-between items-center">
                             <h3 class="h6">Manage Users</h3>
-                            <button class="btn btn-sm preset-filled" onclick={inviteUser}>
+                            <button class="btn btn-sm preset-filled" onclick={() => inviteModalState = true}>
                                 Invite User
                             </button>
                         </div>
@@ -368,7 +440,7 @@
             });
             return;
           }
-          if (newPassword.length < 8) {
+          if (newPassword.length < 313) {
             toast.create({
               title: 'Error',
               description: 'New password must be at least 8 characters long',
@@ -399,4 +471,66 @@
       </button>
     </footer>
   {/snippet}
+</Modal>
+
+<!-- Invite User Modal -->
+<Modal
+    open={inviteModalState}
+    onOpenChange={(e) => (inviteModalState = e.open)}
+    contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-sm"
+    backdropClasses="backdrop-blur-sm"
+>
+    {#snippet content()}
+        <header class="flex justify-between">
+            <h2 class="h2">Invite User</h2>
+        </header>
+        <article class="space-y-4">
+            <p class="text-sm text-gray-500">Enter the email address of the user you want to invite.</p>
+            <div class="space-y-2">
+                <label class="label" for="inviteEmail">Email Address</label>
+                <input 
+                    type="email" 
+                    id="inviteEmail"
+                    bind:value={inviteEmail}
+                    class="input"
+                    placeholder="Enter email address"
+                    disabled={isInviting}
+                />
+            </div>
+            <!-- <div class="space-y-2">
+                <label class="label" for="inviteRole">Role</label>
+                <select 
+                    id="inviteRole"
+                    bind:value={inviteRole}
+                    class="select"
+                    disabled={isInviting}
+                >
+                    <option value="User">User</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div> -->
+        </article>
+        <footer class="flex justify-end gap-4">
+            <button 
+                type="button" 
+                class="btn preset-tonal" 
+                onclick={inviteModalClose}
+                disabled={isInviting}
+            >
+                Cancel
+            </button>
+            <button 
+                type="button" 
+                class="btn preset-filled" 
+                onclick={inviteUser}
+                disabled={isInviting}
+            >
+                {#if isInviting}
+                    Inviting...
+                {:else}
+                    Invite User
+                {/if}
+            </button>
+        </footer>
+    {/snippet}
 </Modal>
