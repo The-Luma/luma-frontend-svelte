@@ -30,6 +30,15 @@
     let inviteRole = $state('Viewer');
     let isInviting = $state(false);
 
+    interface User {
+        id: number;
+        username: string;
+        role: string;
+    }
+    
+    let users = $state<User[]>([]);
+    let isLoading = $state(false);
+
     function userModalClose() {
         usernameModalState = false;
     }
@@ -44,22 +53,44 @@
         inviteRole = 'Viewer';
     }
 
-    // Dummy data for users
-    let users = $state([
-        { id: 1, name: 'John Doe', role: 'Admin' },
-        { id: 2, name: 'Jane Smith', role: 'Editor' },
-        { id: 3, name: 'Bob Wilson', role: 'Viewer' }
-    ]);
-    
-    onMount(() => {
+    onMount(async () => {
         email = $auth.user?.email || 'Email';
         username = $auth.user?.username || 'User';
         password = '********';
         
         if ($auth.user?.role === 'admin') {
             isAdmin = true;
+            await loadUsers();
         }
     });
+
+    const loadUsers = async () => {
+        isLoading = true;
+        try {
+            const response = await fetch('/api/users', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch users');
+            }
+
+            const data = await response.json();
+            users = data.users || [];
+        } catch (error) {
+            console.error('Error loading users:', error);
+            toast.create({
+                title: 'Error',
+                description: 'Failed to load users. Please try again.',
+                type: 'error'
+            });
+        } finally {
+            isLoading = false;
+        }
+    };
 
     const inviteUser = async () => {
         if (!inviteEmail.trim()) {
@@ -73,15 +104,20 @@
 
         isInviting = true;
         try {
-            // TODO: Implement actual invite API call
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-            
-            // Add new user to the list (temporary)
-            users = [...users, {
-                id: users.length + 1,
-                name: inviteEmail.split('@')[0],
-                role: inviteRole
-            }];
+            const response = await fetch('/api/users/invite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: inviteEmail,
+                    role: inviteRole
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to invite user');
+            }
 
             toast.create({
                 title: 'Success',
@@ -89,6 +125,7 @@
                 type: 'success'
             });
             inviteModalClose();
+            await loadUsers(); // Reload the users list
         } catch (error) {
             console.error('Error inviting user:', error);
             toast.create({
@@ -227,35 +264,43 @@
                         </div>
 
                         <div class="space-y-4">
-                            {#each users as user}
-                                <div class="card p-4 variant-ghost-surface">
-                                    <div class="grid grid-cols-3 gap-4 items-center">
-                                        <div class="col-span-1">
-                                            <p class="font-medium">{user.name}</p>
-                                        </div>
-                                        <select 
-                                            class="col-span-1" 
-                                            bind:value={user.role}
-                                            onchange={(e: Event) => {
-                                                const target = e.target as HTMLSelectElement;
-                                                if (target) {
-                                                    changeRole(user.id, target.value);
-                                                }
-                                            }}
-                                        >
-                                            <option value="Admin">Admin</option>
-                                            <option value="Editor">Editor</option>
-                                            <option value="Viewer">Viewer</option>
-                                        </select>
-                                        <button 
-                                            class="btn btn-sm preset-filled-error-500 col-span-1"
-                                            onclick={() => removeUser(user.id)}
-                                        >
-                                            Remove
-                                        </button>
-                                    </div>
+                            {#if isLoading}
+                                <div class="flex justify-center">
+                                    <div class="spinner"></div>
                                 </div>
-                            {/each}
+                            {:else if users.length === 0}
+                                <p class="text-center text-gray-500">No users found</p>
+                            {:else}
+                                {#each users as user}
+                                    <div class="card p-4 variant-ghost-surface">
+                                        <div class="grid grid-cols-3 gap-4 items-center">
+                                            <div class="col-span-1">
+                                                <p class="font-medium">{user.username}</p>
+                                            </div>
+                                            <select 
+                                                class="col-span-1" 
+                                                bind:value={user.role}
+                                                onchange={(e: Event) => {
+                                                    const target = e.target as HTMLSelectElement;
+                                                    if (target) {
+                                                        changeRole(user.id, target.value);
+                                                    }
+                                                }}
+                                            >
+                                                <option value="Admin">Admin</option>
+                                                <option value="Editor">Editor</option>
+                                                <option value="Viewer">Viewer</option>
+                                            </select>
+                                            <button 
+                                                class="btn btn-sm preset-filled-error-500 col-span-1"
+                                                onclick={() => removeUser(user.id)}
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                {/each}
+                            {/if}
                         </div>
                     </div>
                 </Tabs.Panel>
