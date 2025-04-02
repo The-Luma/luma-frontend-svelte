@@ -51,3 +51,8 @@ html,
 body {
 	@apply h-full overflow-hidden;
 }
+
+/* .locator('[]') */
+[data-testid="toast-provider"] {
+  z-index: 9999 !important;
+}

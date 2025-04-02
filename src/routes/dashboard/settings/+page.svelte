@@ -1,10 +1,8 @@
 <script lang="ts">
-    // Settings functionality will be implemented here
     import { auth } from '$lib/stores/auth';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { Tabs, Modal } from '@skeletonlabs/skeleton-svelte';
-    // import { writable } from 'svelte/store';
     import { getContext } from 'svelte';
     import type { ToastContext } from '@skeletonlabs/skeleton-svelte';
 
@@ -56,7 +54,7 @@
     onMount(async () => {
         email = $auth.user?.email || 'Email';
         username = $auth.user?.username || 'User';
-        password = '********';
+        password = '****************';
         
         if ($auth.user?.role === 'admin') {
             isAdmin = true;
@@ -210,7 +208,7 @@
             {#snippet content()}
                 <Tabs.Panel value="user">
                     <div class="space-y-4">
-                        <h1 class="h1">User Settings</h1>
+                        <h1 class="h1">Settings</h1>
                         <hr class="hr" />
                         
                         <div class='grid gap-4 grid-cols-3 gap-4'>
@@ -355,167 +353,167 @@
 
 <!-- Change Username Modal -->
 <Modal
-  open={usernameModalState}
-  onOpenChange={(e) => (usernameModalState = e.open)}
-  contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-sm"
-  backdropClasses="backdrop-blur-sm"
+    open={usernameModalState}
+    onOpenChange={(e) => (usernameModalState = e.open)}
+    contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-sm"
+    backdropClasses="backdrop-blur-sm"
 >
-  {#snippet content()}
-    <header class="flex justify-between">
-      <h2 class="h2">Update Username</h2>
-    </header>
-    <article class="space-y-4">
-      <p class="text-sm text-gray-500">Enter your new username below.</p>
-      <div class="space-y-2">
-        <label class="label" for="newUsername">New Username</label>
-        <input 
-          type="text" 
-          id="newUsername"
-          bind:value={newUsername}
-          class="input"
-          placeholder="Enter new username"
-        />
-      </div>
-    </article>
-    <footer class="flex justify-end gap-4">
-      <button type="button" class="btn preset-tonal" onclick={userModalClose}>Cancel</button>
-      <button 
-        type="button" 
-        class="btn preset-filled" 
-        onclick={() => {
-          if (newUsername.trim()) {
-            username = newUsername;
-            newUsername = '';
-            userModalClose();
-          } else {
-            toast.create({
-              title: 'Error',
-              description: 'Username cannot be empty',
-              type: 'error'
-            });
-          }
-        }}
-      >
-        Update Username
-      </button>
-    </footer>
-  {/snippet}
+    {#snippet content()}
+        <header class="flex justify-between">
+        <h2 class="h2">Update Username</h2>
+        </header>
+        <article class="space-y-4">
+        <p class="text-sm text-gray-500">Enter your new username below.</p>
+        <div class="space-y-2">
+            <label class="label" for="newUsername">New Username</label>
+            <input 
+            type="text" 
+            id="newUsername"
+            bind:value={newUsername}
+            class="input"
+            placeholder="Enter new username"
+            />
+        </div>
+        </article>
+        <footer class="flex justify-end gap-4">
+        <button type="button" class="btn preset-tonal" onclick={userModalClose}>Cancel</button>
+        <button 
+            type="button" 
+            class="btn preset-filled" 
+            onclick={() => {
+            if (newUsername.trim()) {
+                username = newUsername;
+                newUsername = '';
+                userModalClose();
+            } else {
+                toast.create({
+                title: 'Error',
+                description: 'Username cannot be empty',
+                type: 'error'
+                });
+            }
+            }}
+        >
+            Update Username
+        </button>
+        </footer>
+    {/snippet}
 </Modal>
 
 <!-- Change Password Modal -->
 <Modal
-  open={passwordModalState}
-  onOpenChange={(e) => (passwordModalState = e.open)}
-  contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-sm"
-  backdropClasses="backdrop-blur-sm"
+    open={passwordModalState}
+    onOpenChange={(e) => (passwordModalState = e.open)}
+    contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-sm"
+    backdropClasses="backdrop-blur-sm"
 >
-  {#snippet content()}
-    <header class="flex justify-between">
-      <h2 class="h2">Update Password</h2>
-    </header>
-    <article class="space-y-4">
-      <div class="space-y-2">
-        <label class="label" for="currentPassword">Current Password</label>
-        <input 
-          type="password" 
-          id="currentPassword"
-          bind:value={currentPassword}
-          class="input"
-          placeholder="Enter current password"
-          disabled={isUpdatingPassword}
-        />
-      </div>
-      <div class="space-y-2">
-        <label class="label" for="newPassword">New Password</label>
-        <input 
-          type="password" 
-          id="newPassword"
-          bind:value={newPassword}
-          class="input"
-          placeholder="Enter new password"
-          disabled={isUpdatingPassword}
-        />
-      </div>
-      <div class="space-y-2">
-        <label class="label" for="confirmPassword">Confirm New Password</label>
-        <input 
-          type="password" 
-          id="confirmPassword"
-          bind:value={confirmPassword}
-          class="input"
-          placeholder="Confirm new password"
-          disabled={isUpdatingPassword}
-        />
-      </div>
-    </article>
-    <footer class="flex justify-end gap-4">
-      <button 
-        type="button" 
-        class="btn preset-tonal" 
-        onclick={passwordModalClose}
-        disabled={isUpdatingPassword}
-      >
-        Cancel
-      </button>
-      <button 
-        type="button" 
-        class="btn preset-filled" 
-        onclick={() => {
-          if (!currentPassword.trim()) {
-            toast.create({
-              title: 'Error',
-              description: 'Current password is required',
-              type: 'error'
-            });
-            return;
-          }
-          if (!newPassword.trim()) {
-            toast.create({
-              title: 'Error',
-              description: 'New password is required',
-              type: 'error'
-            });
-            return;
-          }
-          if (newPassword !== confirmPassword) {
-            toast.create({
-              title: 'Error',
-              description: 'New passwords do not match',
-              type: 'error'
-            });
-            return;
-          }
-          if (newPassword.length < 313) {
-            toast.create({
-              title: 'Error',
-              description: 'New password must be at least 8 characters long',
-              type: 'error'
-            });
-            return;
-          }
+    {#snippet content()}
+        <header class="flex justify-between">
+        <h2 class="h2">Update Password</h2>
+        </header>
+        <article class="space-y-4">
+        <div class="space-y-2">
+            <label class="label" for="currentPassword">Current Password</label>
+            <input 
+            type="password" 
+            id="currentPassword"
+            bind:value={currentPassword}
+            class="input"
+            placeholder="Enter current password"
+            disabled={isUpdatingPassword}
+            />
+        </div>
+        <div class="space-y-2">
+            <label class="label" for="newPassword">New Password</label>
+            <input 
+            type="password" 
+            id="newPassword"
+            bind:value={newPassword}
+            class="input"
+            placeholder="Enter new password"
+            disabled={isUpdatingPassword}
+            />
+        </div>
+        <div class="space-y-2">
+            <label class="label" for="confirmPassword">Confirm New Password</label>
+            <input 
+            type="password" 
+            id="confirmPassword"
+            bind:value={confirmPassword}
+            class="input"
+            placeholder="Confirm new password"
+            disabled={isUpdatingPassword}
+            />
+        </div>
+        </article>
+        <footer class="flex justify-end gap-4">
+        <button 
+            type="button" 
+            class="btn preset-tonal" 
+            onclick={passwordModalClose}
+            disabled={isUpdatingPassword}
+        >
+            Cancel
+        </button>
+        <button 
+            type="button" 
+            class="btn preset-filled" 
+            onclick={() => {
+            if (!currentPassword.trim()) {
+                toast.create({
+                title: 'Error',
+                description: 'Current password is required',
+                type: 'error'
+                });
+                return;
+            }
+            if (!newPassword.trim()) {
+                toast.create({
+                title: 'Error',
+                description: 'New password is required',
+                type: 'error'
+                });
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                toast.create({
+                title: 'Error',
+                description: 'New passwords do not match',
+                type: 'error'
+                });
+                return;
+            }
+            if (newPassword.length < 313) {
+                toast.create({
+                title: 'Error',
+                description: 'New password must be at least 8 characters long',
+                type: 'error'
+                });
+                return;
+            }
 
-          isUpdatingPassword = true;
-          // TODO: Implement actual password update API call
-          setTimeout(() => {
-            password = '********';
-            passwordModalClose();
-            toast.create({
-              title: 'Success',
-              description: 'Password updated successfully',
-              type: 'success'
-            });
-          }, 1000);
-        }}
-        disabled={isUpdatingPassword}
-      >
-        {#if isUpdatingPassword}
-          Updating...
-        {:else}
-          Update Password
-        {/if}
-      </button>
-    </footer>
-  {/snippet}
+            isUpdatingPassword = true;
+            // TODO: Implement actual password update API call
+            setTimeout(() => {
+                password = '********';
+                passwordModalClose();
+                toast.create({
+                title: 'Success',
+                description: 'Password updated successfully',
+                type: 'success'
+                });
+            }, 1000);
+            }}
+            disabled={isUpdatingPassword}
+        >
+            {#if isUpdatingPassword}
+            Updating...
+            {:else}
+            Update Password
+            {/if}
+        </button>
+        </footer>
+    {/snippet}
 </Modal>
 
 <!-- Invite User Modal -->
@@ -542,18 +540,7 @@
                     disabled={isInviting}
                 />
             </div>
-            <!-- <div class="space-y-2">
-                <label class="label" for="inviteRole">Role</label>
-                <select 
-                    id="inviteRole"
-                    bind:value={inviteRole}
-                    class="select"
-                    disabled={isInviting}
-                >
-                    <option value="User">User</option>
-                    <option value="Admin">Admin</option>
-                </select>
-            </div> -->
+            
         </article>
         <footer class="flex justify-end gap-4">
             <button 
