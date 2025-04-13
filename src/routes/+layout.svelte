@@ -138,7 +138,7 @@
 
 <ToastProvider>
 	{#if $page.url.pathname.startsWith('/dashboard')}
-		<div class="grid h-screen grid-rows-[auto_1fr_auto]">
+		<div class="h-full grid grid-rows-[auto_1fr_auto]">
 			<!-- Header -->
 			<header class="bg-surface-100-800 border-b border-surface-200-700">
 				<div class="flex items-center justify-between px-4 py-2">
@@ -177,7 +177,7 @@
 				</div>
 
 				<!-- Main Content -->
-				<main class="p-4 overflow-auto">
+				<main class="p-2 overflow-auto">
 					{@render children?.()}
 				</main>
 			</div>
@@ -198,7 +198,7 @@
 		</div>
 	{:else}
 		<!-- Simple layout for non-dashboard pages -->
-		<main class="min-h-screen">
+		<main class="h-full">
 			{@render children?.()}
 		</main>
 	{/if}

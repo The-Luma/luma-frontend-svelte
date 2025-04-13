@@ -49,5 +49,6 @@
 
 html,
 body {
-	@apply h-full overflow-hidden;
+  height: 100%;
+  @apply h-full overflow-hidden;
 }
