@@ -138,6 +138,7 @@
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${document.cookie.split('access_token=')[1]?.split(';')[0]}`
                 }
             });
 
@@ -154,6 +155,7 @@
                 description: 'Was not able to get namespace',
                 type: 'error'
             });
+            console.log(err)
             return;
         } finally {
             isLoading = false;
