@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { api } from '$lib/services/api';
     import { onMount } from 'svelte';
     import { getContext } from 'svelte';
     import type { ToastContext } from '@skeletonlabs/skeleton-svelte';
@@ -30,15 +31,43 @@
     }
 
 
+    let namespaces = $state([
+        {
+            id: 1,
+            name: "Development",
+            description: "Development environment for testing and debugging",
+            created_at: "2024-03-15T10:30:00Z"
+        },
+        {
+            id: 2,
+            name: "Production",
+            description: "Live production environment for end users",
+            created_at: "2024-03-10T14:20:00Z"
+        },
+        {
+            id: 3,
+            name: "Staging",
+            description: "Staging environment for pre-production testing",
+            created_at: "2024-03-05T09:15:00Z"
+        },
+        {
+            id: 4,
+            name: "QA",
+            description: "Quality assurance testing environment",
+            created_at: "2024-02-28T16:45:00Z"
+        },
+        {
+            id: 5,
+            name: "Backup",
+            description: "Backup and recovery namespace",
+            created_at: "2024-02-20T11:10:00Z"
+        }
+    ]);
     let isLoading = $state(false);
     let error = $state<string | null>(null);
-    // svelte-ignore non_reactive_update
-    let namespaces: Namespace[] = [];
-    let showCreateModal = $state(false);
 
     function modalClose() {
         ModalOpenState = false;
-        // Clear input fields
         newNamespace = {
             name: '',
             description: ''
@@ -67,11 +96,11 @@
 
         isCreating = true;
         try {
-            const response = await fetch('/api/namespaces', {
+            const response = await fetch('api/namespaces', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${document.cookie.split('access_token=')[1]?.split(';')[0]}`
+                    'Authorization': `Bearer ${document.cookie.split('access_token=')[0]?.split(';')[1]}`
                 },
                 body: JSON.stringify(newNamespace)
             });
@@ -136,70 +165,69 @@
     });
 </script>
 
-<div class="card w-full p-4">
-    <div class="flex justify-between items-center mb-4">
-        <h1 class="h1">My Namespaces</h1>
-        <div class="flex justify-end">
-            <button 
-                type="button" 
-                class="btn btn-sm preset-filled" 
-                id='change_username'
-                onclick={() => ModalOpenState = true}
-            >
-                Create Namespace
-            </button>
+<div class="flex-1 flex flex-col h-[calc(100vh-2rem)]">
+    <div class="card w-full h-full p-4">
+        <div class="flex justify-between items-center m-5">
+            <h1 class="h1">My Namespaces</h1>
+            <div class="flex justify-end">
+                <button 
+                    type="button" 
+                    class="btn preset-filled-primary-500 ml-50"
+                    id='change_username'
+                    onclick={() => ModalOpenState = true}
+                >
+                    Create Namespace
+                </button>
+            </div>
         </div>
-        
-    </div>
 
-    {#if isLoading}
-        <div class="flex justify-center items-center h-32">
-            <div class="spinner"></div>
-        </div>
-    <!-- {:else if error}
-        <div class="text-error-500 text-center p-4">
-            {error}
-        </div> -->
-    {:else if namespaces.length === 0 || error}
-        <div class="text-center p-8 text-surface-600-400">
-            No namespaces found. Create your first namespace to get started.
-        </div>
-    {:else}
+        {#if isLoading}
+            <div class="flex justify-center items-center h-32">
+                <div class="spinner"></div>
+            </div>
+        {:else if namespaces.length === 0 || error}
+            <div class="text-center p-8 text-surface-600-400">
+                No namespaces found. Create your first namespace to get started.
+            </div>
+        {:else}
         <div class="table-wrap">
-            <table class="table caption-bottom">
-                <caption class="pt-4">List of available namespaces</caption>
-                <thead>
+            <table class="table caption-bottom ">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Created At</th>
+                  <th>&nbsp;</th>
+                  <th>&nbsp;</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each namespaces as row}
                     <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Created At</th>
-                        <th class="!text-right">Actions</th>
+                      <td>{row.name}</td>
+                      <td>{row.description}</td>
+                      <td>{row.created_at}</td>
+                      <td class="text-right mr-10">
+                        <button class="btn btn-sm preset-tonal-secondary" id="addUser">
+                          Add User
+                        </button>
+                      </td>
+                      <td class="text-right mr-10">
+                        <button class="btn preset-tonal-success">View User &rarr;</button>
+                      </td> 
+                      <td class="text-right mr-10">
+                        <button class="btn preset-tonal-error" id="del">
+                            Delete
+                        </button>
+                      </td>
                     </tr>
-                </thead>
-                <tbody class="[&>tr]:hover:preset-tonal-primary">
-                    {#each namespaces as namespace}
-                        <tr>
-                            <td>{namespace.name}</td>
-                            <td>{namespace.description}</td>
-                            <td>{new Date(namespace.created_at).toLocaleDateString()}</td>
-                            <td class="text-right">
-                                <div class="flex gap-2 justify-end">
-                                    <button class="btn btn-sm preset-filled-primary-500">Edit</button>
-                                    <button class="btn btn-sm preset-filled-error-500">Delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                    {/each}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3">Total Namespaces</td>
-                        <td class="text-right">{namespaces.length}</td>
-                    </tr>
-                </tfoot>
+                {/each}
+              </tbody>
             </table>
-        </div>
-    {/if}
+          </div>
+        {/if}
+    </div>
 </div>
 
 <Modal
