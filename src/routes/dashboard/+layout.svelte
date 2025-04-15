@@ -27,12 +27,11 @@
     };
 </script>
 
-<div class="grid h-screen grid-rows-[auto_1fr_auto]">
-
+<div class="flex flex-col h-full">
     <!-- Grid Columns -->
-    <div class="grid grid-cols-1 md:grid-cols-[auto_1fr]">
+    <div class="flex-1 grid grid-cols-1 md:grid-cols-[auto_1fr]">
         <!-- Main Content -->
-        <main class="bg-surface-50-900 p-4">
+        <main class="h-full bg-surface-50-900">
             {#if isLoading}
                 <div class="flex justify-center items-center h-[50vh]">
                     <div class="loading loading-spinner loading-lg"></div>
@@ -44,5 +43,4 @@
             {/if}
         </main>
     </div>
-
 </div> 
