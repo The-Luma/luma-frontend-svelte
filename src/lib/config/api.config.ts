@@ -16,6 +16,8 @@ export const API_CONFIG = {
             refresh: '/refresh',
             me: '/me',
             check: '/auth/check',
+            changeUsername: '/auth/username',
+            changePassword: '/auth/password',
         },
         admin: {
             create: '/admin',
