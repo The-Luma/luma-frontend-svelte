@@ -49,7 +49,7 @@
 		{#snippet content()}
 			<header class="flex justify-between items-center">
 				<p class="font-bold text-xl">Select Theme</p>
-				<button class="btn-icon hover:preset-tonal" on:click={popoverClose}>
+				<button class="btn-icon hover:preset-tonal" onclick={popoverClose}>
 					<IconX class="w-5 h-5" />
 				</button>
 			</header>
@@ -70,7 +70,7 @@
 						class="btn variant-ghost-surface w-full justify-start gap-2 {theme.id === $currentTheme
 							? 'variant-filled-primary'
 							: ''}"
-						on:click={() => {
+						onclick={() => {
 							setTheme(theme.id);
 							popoverClose();
 						}}
@@ -84,7 +84,7 @@
 	</Popover>
 	<button 
 		class="btn variant-ghost-surface" 
-		on:click={toggleDarkMode}
+		onclick={toggleDarkMode}
 		title={$isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
 	>
 		{#if $isDarkMode}

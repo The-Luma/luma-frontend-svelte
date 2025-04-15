@@ -143,13 +143,13 @@
 			<header class="bg-surface-100-800 border-b border-surface-200-700">
 				<div class="flex items-center justify-between px-4 py-2">
 					<div class="flex items-center gap-4">
-						<button class="btn variant-ghost-surface" on:click={handleDashboardHome}>
+						<button class="btn variant-ghost-surface" onclick={handleDashboardHome}>
 							<h1 class="h2">Luma</h1>
 						</button>
 					</div>
 					<div class="flex items-center gap-4">
 						<ThemeSwitcher />
-						<button class="btn variant-ghost-surface" on:click={handleLogout}>
+						<button class="btn variant-ghost-surface" onclick={handleLogout}>
 							<IconLogOut class="w-5 h-5" />
 						</button>
 					</div>

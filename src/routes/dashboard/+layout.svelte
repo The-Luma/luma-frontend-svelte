@@ -27,11 +27,10 @@
     };
 </script>
 
-<div class="flex flex-col h-full">
+<div class="flex flex-col w-full h-full">
     <!-- Grid Columns -->
-    <div class="flex-1 grid grid-cols-1 md:grid-cols-[auto_1fr]">
         <!-- Main Content -->
-        <main class="h-full bg-surface-50-900">
+        <main class="w-full bg-surface-50-900">
             {#if isLoading}
                 <div class="flex justify-center items-center h-[50vh]">
                     <div class="loading loading-spinner loading-lg"></div>
@@ -42,5 +41,4 @@
                 <p class="text-center text-error-500">Not authenticated. Redirecting to login...</p>
             {/if}
         </main>
-    </div>
 </div> 

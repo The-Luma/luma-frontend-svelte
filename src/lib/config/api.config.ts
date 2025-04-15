@@ -27,6 +27,26 @@ export const API_CONFIG = {
         },
         health: {
             check: ''
+        },
+        namespaces: {
+            create: '/namespaces',
+            list: '/namespaces',
+            delete: '/namespaces/:id',
+            share: '/namespaces/:id/share',
+            revoke: '/namespaces/:id/revoke',
+        },
+        chats: {
+            start: '/chats/start',
+            send: '/chats/message',
+            history: '/chats/:id/history',
+            list: '/chats',
+            delete: '/chats/:id',
+        },
+        files: {
+            upload: '/documents/upload/:id',
+            list: '/documents/:id',
+            delete: '/documents/:id/:docId',
+            download: '/documents/:id/:docId/download',
         }
     }
 } as const;

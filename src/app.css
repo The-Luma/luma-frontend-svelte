@@ -50,10 +50,12 @@
 html,
 body {
   height: 100%;
-  @apply h-full overflow-hidden;
 }
 
-/* .locator('[]') */
 [data-testid="toast-provider"] {
-  z-index: 9999 !important;
+  z-index: 9000 !important;
+}
+
+[data-scope="popover"] {
+  z-index: 9500 !important;
 }

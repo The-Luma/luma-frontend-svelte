@@ -1,5 +1,6 @@
 import type { ApiResponse, ApiError as IApiError } from '$lib/types/api.types';
 import { API_CONFIG } from '$lib/config/api.config';
+import { api } from './api';
 
 export class HttpError extends Error {
     constructor(
@@ -38,17 +39,38 @@ export abstract class BaseService {
                 },
             });
 
+            const responseData = await response.json();
+            console.log('API Response:', { url, status: response.status, data: responseData });
+
+            // Handle 401 Unauthorized errors by attempting token refresh
+            if (response.status === 401 && endpoint !== API_CONFIG.endpoints.auth.refresh) {
+                console.log('Attempting token refresh...');
+                const refreshResponse = await api.auth.refreshToken();
+                
+                if (refreshResponse.error) {
+                    console.error('Token refresh failed:', refreshResponse.error);
+                    return {
+                        error: 'Session expired. Please login again.',
+                        status: 401
+                    };
+                }
+
+                // Retry the original request with the new token
+                console.log('Token refreshed, retrying original request...');
+                return this.fetch<T>(endpoint, options);
+            }
+
             if (!response.ok) {
-                const error = await response.json();
                 return {
-                    error: error.message || 'An error occurred',
+                    error: responseData.error || 'An error occurred',
                     status: response.status
                 };
             }
 
-            const data = await response.json();
+            // Handle both direct data and nested data structures
+            const data = responseData.data || responseData;
             return {
-                data,
+                data: data as T,
                 status: response.status
             };
         } catch (error) {
