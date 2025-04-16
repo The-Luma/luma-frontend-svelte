@@ -2,6 +2,7 @@ import { BaseService } from './base.service';
 import type { RegisterRequest, LoginResponse, SearchUsersQuery, SearchUsersResponse } from '$lib/types/auth.types';
 import { API_CONFIG } from '$lib/config/api.config';
 import type { ApiResponse } from '$lib/types/api.types';
+import { getFullUrl } from '$lib/utils/url.utils';
 
 interface ListUsersResponse {
     users: Array<{
@@ -53,7 +54,15 @@ export class AdminService extends BaseService {
     }
 
     async inviteUser(data: InviteUserRequest): Promise<ApiResponse<InviteUserResponse>> {
-        return this.post<InviteUserResponse>(API_CONFIG.endpoints.admin.invitations, data);
+        const response = await this.post<InviteUserResponse>(API_CONFIG.endpoints.admin.invitations, data);
+        
+        // If we have a successful response, modify the invitation_link to use the current base URL
+        if (response.data) {
+            const token = response.data.token;
+            response.data.invitation_link = getFullUrl(`register?token=${token}`);
+        }
+        
+        return response;
     }
 
     async deleteUser(userId: number): Promise<ApiResponse<null>> {
