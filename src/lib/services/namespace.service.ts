@@ -56,4 +56,9 @@ export class NamespaceService extends BaseService {
         const endpoint = API_CONFIG.endpoints.namespaces.access.replace(':id', id.toString());
         return this.get<{ access_list: NamespaceAccessResponse[] }>(endpoint);
     }
+
+    async getAccessLevel(id: number): Promise<ApiResponse<{ access_level: number }>> {
+        const endpoint = API_CONFIG.endpoints.namespaces.accessLevel.replace(':id', id.toString());
+        return this.get<{ access_level: number }>(endpoint);
+    }
 } 

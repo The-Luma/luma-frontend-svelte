@@ -36,6 +36,10 @@
     let selectedAuthLevel = $state("1"); // Default to read-only access
     let usersWithAccess = $state<{user: UserResponse, auth_level: number, granted_at: string}[]>([]);
     let isLoadingAccessList = $state(false);
+    let isRevoking = $state(false);
+    let userToRevoke = $state<{user: UserResponse, auth_level: number} | null>(null);
+    let userAccessLevel = $state<number | null>(null);
+    let isLoadingAccessLevel = $state(false);
 
     const accessLevels = [
         { value: "1", label: "Read Only" },
@@ -98,6 +102,7 @@
         fetchDocuments(namespace.id);
         fetchUsers();
         fetchUsersWithAccess();
+        fetchUserAccessLevel();
     }
 
     function closeSettings() {
@@ -106,6 +111,8 @@
         documents = [];
         users = [];
         selectedUser = null;
+        usersWithAccess = [];
+        userAccessLevel = null;
     }
 
     async function createNamespace() {
@@ -431,6 +438,32 @@
         }
     }
 
+    async function fetchUserAccessLevel() {
+        if (!selectedNamespace) return;
+        
+        isLoadingAccessLevel = true;
+        try {
+            const response = await api.namespaces.getAccessLevel(selectedNamespace.id);
+            
+            if (response.error) {
+                throw new Error(response.error);
+            }
+
+            if (response.data) {
+                userAccessLevel = response.data.access_level;
+            }
+        } catch (err) {
+            console.error('Error fetching user access level:', err);
+            toast.create({
+                title: 'Error',
+                description: 'Failed to fetch access level',
+                type: 'error'
+            });
+        } finally {
+            isLoadingAccessLevel = false;
+        }
+    }
+
     async function shareNamespace() {
         if (!selectedUser || !selectedNamespace) return;
         
@@ -467,6 +500,59 @@
         } finally {
             isSharing = false;
         }
+    }
+
+    async function revokeAccess(user: UserResponse) {
+        if (!selectedNamespace) return;
+        
+        userToRevoke = usersWithAccess.find(access => access.user.id === user.id) || null;
+        if (!userToRevoke) return;
+        
+        isRevoking = true;
+        try {
+            const response = await api.namespaces.revoke(selectedNamespace.id, {
+                user_id: user.id
+            });
+            
+            if (response.error) {
+                throw new Error(response.error);
+            }
+            
+            toast.create({
+                title: 'Success',
+                description: `Access revoked from ${user.username}`,
+                type: 'success'
+            });
+            
+            // Refresh the access list
+            await fetchUsersWithAccess();
+        } catch (err) {
+            console.error('Error revoking access:', err);
+            toast.create({
+                title: 'Error',
+                description: err instanceof Error ? err.message : 'Failed to revoke access',
+                type: 'error'
+            });
+        } finally {
+            isRevoking = false;
+            userToRevoke = null;
+        }
+    }
+
+    function canManageAccess(): boolean {
+        return userAccessLevel === 3; // Admin level
+    }
+
+    function canUploadDocuments(): boolean {
+        return userAccessLevel >= 2; // Read & Write or Admin level
+    }
+
+    function canDeleteDocuments(): boolean {
+        return userAccessLevel >= 2; // Read & Write or Admin level
+    }
+
+    function canDeleteNamespace(): boolean {
+        return userAccessLevel === 3; // Admin level
     }
 
     onMount(() => {
@@ -626,42 +712,48 @@
                         <!-- Left Column: File Upload -->
                         <div class="space-y-4">
                             <h4 class="h4">Add New File</h4>
-                            <div class="flex justify-center">
-                                <div class="w-full max-w-md">
-                                    <FileUpload
-                                        name="namespace-files"
-                                        accept="application/pdf"
-                                        maxFiles={1}
-                                        subtext="Upload a PDF file to this space"
-                                        onFileAccept={(details) => {
-                                            console.log('Files accepted:', details);
-                                            handleFileUpload(details);
-                                        }}
-                                        onFileReject={(details) => {
-                                            console.error('Files rejected:', details);
-                                            toast.create({
-                                                title: 'File Upload Failed',
-                                                description: 'Please upload a PDF file only.',
-                                                type: 'error'
-                                            });
-                                        }}
-                                        classes="w-full"
-                                        disabled={isUploading}
-                                    >
-                                        {#snippet iconInterface()}<IconDropzone class="size-8" />{/snippet}
-                                        {#snippet iconFile()}<IconFile class="size-4" />{/snippet}
-                                        {#snippet iconFileRemove()}<IconRemove class="size-4" />{/snippet}
-                                    </FileUpload>
-                                    {#if isUploading}
-                                        <div class="space-y-2 mt-4">
-                                            <Progress value={null} />
-                                            <div class="text-center text-sm text-surface-600-400">
-                                                Uploading...
-                                            </div>
-                                        </div>
-                                    {/if}
+                            {#if !canUploadDocuments()}
+                                <div class="card p-4 text-surface-600-400 text-center">
+                                    You don't have permission to upload files to this space.
                                 </div>
-                            </div>
+                            {:else}
+                                <div class="flex justify-center">
+                                    <div class="w-full max-w-md">
+                                        <FileUpload
+                                            name="namespace-files"
+                                            accept="application/pdf"
+                                            maxFiles={1}
+                                            subtext="Upload a PDF file to this space"
+                                            onFileAccept={(details) => {
+                                                console.log('Files accepted:', details);
+                                                handleFileUpload(details);
+                                            }}
+                                            onFileReject={(details) => {
+                                                console.error('Files rejected:', details);
+                                                toast.create({
+                                                    title: 'File Upload Failed',
+                                                    description: 'Please upload a PDF file only.',
+                                                    type: 'error'
+                                                });
+                                            }}
+                                            classes="w-full"
+                                            disabled={isUploading}
+                                        >
+                                            {#snippet iconInterface()}<IconDropzone class="size-8" />{/snippet}
+                                            {#snippet iconFile()}<IconFile class="size-4" />{/snippet}
+                                            {#snippet iconFileRemove()}<IconRemove class="size-4" />{/snippet}
+                                        </FileUpload>
+                                        {#if isUploading}
+                                            <div class="space-y-2 mt-4">
+                                                <Progress value={null} />
+                                                <div class="text-center text-sm text-surface-600-400">
+                                                    Uploading...
+                                                </div>
+                                            </div>
+                                        {/if}
+                                    </div>
+                                </div>
+                            {/if}
                         </div>
 
                         <!-- Right Column: Files List -->
@@ -705,13 +797,15 @@
                                                                     >
                                                                         <IconDownload class="size-4" />
                                                                     </button>
-                                                                    <button 
-                                                                        class="btn-icon preset-tonal-error" 
-                                                                        onclick={() => deleteDocument(doc.id)}
-                                                                        title="Delete"
-                                                                    >
-                                                                        <IconTrash class="size-4" />
-                                                                    </button>
+                                                                    {#if canDeleteDocuments()}
+                                                                        <button 
+                                                                            class="btn-icon preset-tonal-error" 
+                                                                            onclick={() => deleteDocument(doc.id)}
+                                                                            title="Delete"
+                                                                        >
+                                                                            <IconTrash class="size-4" />
+                                                                        </button>
+                                                                    {/if}
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -732,50 +826,56 @@
                         <!-- Left Column: Share Access -->
                         <div class="space-y-4">
                             <h4 class="h4">Share Access</h4>
-                            <div class="card p-4">
-                                {#if isLoadingUsers}
-                                    <div class="flex justify-center items-center h-32">
-                                        <div class="spinner"></div>
-                                    </div>
-                                {:else if users.length === 0}
-                                    <div class="text-surface-600-400 text-center">
-                                        No users available to share with
-                                    </div>
-                                {:else}
-                                    <label class="label" for="user">User</label>
-                                    <select 
-                                        class="select w-full" 
-                                        id="user"
-                                        bind:value={selectedUser}
-                                    >
-                                        <option value={null}>Select a user to share with...</option>
-                                        {#each users as user}
-                                            <option value={user}>{user.username} ({user.email})</option>
-                                        {/each}
-                                    </select>
-                                    <div class="mt-2">
-                                        <label class="label" for="authLevel">Access Level</label>
+                            {#if !canManageAccess()}
+                                <div class="card p-4 text-surface-600-400 text-center">
+                                    You don't have permission to manage access for this space.
+                                </div>
+                            {:else}
+                                <div class="card p-4">
+                                    {#if isLoadingUsers}
+                                        <div class="flex justify-center items-center h-32">
+                                            <div class="spinner"></div>
+                                        </div>
+                                    {:else if users.length === 0}
+                                        <div class="text-surface-600-400 text-center">
+                                            No users available to share with
+                                        </div>
+                                    {:else}
+                                        <label class="label" for="user">User</label>
                                         <select 
                                             class="select w-full" 
-                                            id="authLevel"
-                                            bind:value={selectedAuthLevel}
+                                            id="user"
+                                            bind:value={selectedUser}
                                         >
-                                            {#each accessLevels as level}
-                                                <option value={level.value}>{level.label}</option>
+                                            <option value={null}>Select a user to share with...</option>
+                                            {#each users as user}
+                                                <option value={user}>{user.username} ({user.email})</option>
                                             {/each}
                                         </select>
-                                    </div>
-                                    <div class="mt-4 flex justify-end">
-                                        <button 
-                                            class="btn preset-filled-primary-500" 
-                                            disabled={!selectedUser || isSharing}
-                                            onclick={shareNamespace}
-                                        >
-                                            {isSharing ? 'Sharing...' : 'Share'}
-                                        </button>
-                                    </div>
-                                {/if}
-                            </div>
+                                        <div class="mt-2">
+                                            <label class="label" for="authLevel">Access Level</label>
+                                            <select 
+                                                class="select w-full" 
+                                                id="authLevel"
+                                                bind:value={selectedAuthLevel}
+                                            >
+                                                {#each accessLevels as level}
+                                                    <option value={level.value}>{level.label}</option>
+                                                {/each}
+                                            </select>
+                                        </div>
+                                        <div class="mt-4 flex justify-end">
+                                            <button 
+                                                class="btn preset-filled-primary-500" 
+                                                disabled={!selectedUser || isSharing}
+                                                onclick={shareNamespace}
+                                            >
+                                                {isSharing ? 'Sharing...' : 'Share'}
+                                            </button>
+                                        </div>
+                                    {/if}
+                                </div>
+                            {/if}
                         </div>
 
                         <!-- Right Column: Users List -->
@@ -798,6 +898,7 @@
                                                     <th>User</th>
                                                     <th>Access Level</th>
                                                     <th>Granted At</th>
+                                                    <th>Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -806,6 +907,20 @@
                                                         <td>{access.user.username} ({access.user.email})</td>
                                                         <td>{accessLevels.find(level => parseInt(level.value) === access.auth_level)?.label || `Level ${access.auth_level}`}</td>
                                                         <td>{formatDate(access.granted_at)}</td>
+                                                        <td class="text-right">
+                                                            <div class="flex justify-end gap-2">
+                                                                {#if canManageAccess()}
+                                                                    <button 
+                                                                        class="btn-icon preset-tonal-error" 
+                                                                        onclick={() => revokeAccess(access.user)}
+                                                                        disabled={isRevoking && userToRevoke?.user.id === access.user.id}
+                                                                        title="Revoke Access"
+                                                                    >
+                                                                        <IconX class="size-4" />
+                                                                    </button>
+                                                                {/if}
+                                                            </div>
+                                                        </td>
                                                     </tr>
                                                 {/each}
                                             </tbody>
@@ -818,47 +933,49 @@
                 </div>
             </article>
             <footer class="flex justify-end gap-2">
-                <Popover
-                    open={DeletePopoverOpenState}
-                    onOpenChange={(e) => (DeletePopoverOpenState = e.open)}
-                    positioning={{ placement: 'top' }}
-                    triggerBase="btn preset-tonal-error"
-                    contentBase="card bg-surface-200-800 p-4 space-y-4 max-w-[320px] z-50"
-                    arrow
-                    arrowBackground="!bg-surface-200 dark:!bg-surface-800"
-                >
-                    {#snippet trigger()}
-                        <button 
-                            class="btn preset-tonal-error" 
-                            disabled={isDeleting}
-                        >
-                            {isDeleting ? 'Deleting...' : 'Delete Space'}
-                        </button>
-                    {/snippet}
-                    {#snippet content()}
-                        <header class="flex justify-between">
-                            <p class="font-bold text-xl">Delete Space</p>
-                            <button class="btn-icon hover:preset-tonal" onclick={closeDeletePopover}><IconX /></button>
-                        </header>
-                        <article>
-                            <p class="opacity-60 mb-4">
-                                This action cannot be undone. This will permanently delete the space and all its contents.
-                            </p>
+                {#if canDeleteNamespace()}
+                    <Popover
+                        open={DeletePopoverOpenState}
+                        onOpenChange={(e) => (DeletePopoverOpenState = e.open)}
+                        positioning={{ placement: 'top' }}
+                        triggerBase="btn preset-tonal-error"
+                        contentBase="card bg-surface-200-800 p-4 space-y-4 max-w-[320px] z-50"
+                        arrow
+                        arrowBackground="!bg-surface-200 dark:!bg-surface-800"
+                    >
+                        {#snippet trigger()}
                             <button 
-                                class="btn preset-filled-error w-full" 
-                                onclick={() => {
-                                    if (selectedNamespace) {
-                                        deleteNamespace(selectedNamespace.id);
-                                        closeDeletePopover();
-                                    }
-                                }}
+                                class="btn preset-tonal-error" 
                                 disabled={isDeleting}
                             >
-                                {isDeleting ? 'Deleting...' : 'Confirm Delete'}
+                                {isDeleting ? 'Deleting...' : 'Delete Space'}
                             </button>
-                        </article>
-                    {/snippet}
-                </Popover>
+                        {/snippet}
+                        {#snippet content()}
+                            <header class="flex justify-between">
+                                <p class="font-bold text-xl">Delete Space</p>
+                                <button class="btn-icon hover:preset-tonal" onclick={closeDeletePopover}><IconX /></button>
+                            </header>
+                            <article>
+                                <p class="opacity-60 mb-4">
+                                    This action cannot be undone. This will permanently delete the space and all its contents.
+                                </p>
+                                <button 
+                                    class="btn preset-filled-error w-full" 
+                                    onclick={() => {
+                                        if (selectedNamespace) {
+                                            deleteNamespace(selectedNamespace.id);
+                                            closeDeletePopover();
+                                        }
+                                    }}
+                                    disabled={isDeleting}
+                                >
+                                    {isDeleting ? 'Deleting...' : 'Confirm Delete'}
+                                </button>
+                            </article>
+                        {/snippet}
+                    </Popover>
+                {/if}
                 <button class="btn preset-tonal" onclick={closeSettings}>Close</button>
             </footer>
         {/if}

@@ -361,12 +361,12 @@
                                 }}
                             >
                                 <SpaceAvatar 
-                                    name={namespaceMap[conv.namespace_id]?.name || `Space ${conv.namespace_id}`}
+                                    name={namespaceMap[conv.namespace_id]?.name || `Access Revoked (Space${conv.namespace_id})`}
                                     size="size-8"
                                     isSelected={currentConversation?.id === conv.id}
                                 />
                             <span class="flex-1 text-start">
-                                    {namespaceMap[conv.namespace_id]?.name || `Space ${conv.namespace_id}`}
+                                    {namespaceMap[conv.namespace_id]?.name || `No Access (#${conv.namespace_id})`}
               </span>
                                 <small class="opacity-50">{formatDate(conv.started_at)}</small>
                         </button>
@@ -417,7 +417,7 @@
                     {:else}
                             <div class="grid grid-cols-[auto_1fr] gap-2">
                                 <SpaceAvatar 
-                                    name={currentConversation ? namespaceMap[currentConversation.namespace_id]?.name || `Space ${currentConversation.namespace_id}` : 'AI'}
+                                    name={currentConversation ? namespaceMap[currentConversation.namespace_id]?.name || `Access Revoked (Space ${currentConversation.namespace_id})` : 'AI'}
                                     size="size-12"
                                 />
                                 <div class="p-4 rounded-tl-none space-y-2">
