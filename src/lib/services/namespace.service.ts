@@ -6,7 +6,8 @@ import type {
     CreateNamespaceRequest, 
     ShareNamespaceRequest, 
     RevokeNamespaceRequest,
-    NamespaceQuery 
+    NamespaceQuery,
+    NamespaceAccessResponse
 } from '$lib/types/api.types';
 
 export class NamespaceService extends BaseService {
@@ -49,5 +50,10 @@ export class NamespaceService extends BaseService {
     async revoke(id: number, data: RevokeNamespaceRequest): Promise<ApiResponse<void>> {
         const endpoint = API_CONFIG.endpoints.namespaces.revoke.replace(':id', id.toString());
         return this.post<void>(endpoint, data);
+    }
+
+    async getAccessList(id: number): Promise<ApiResponse<{ access_list: NamespaceAccessResponse[] }>> {
+        const endpoint = API_CONFIG.endpoints.namespaces.access.replace(':id', id.toString());
+        return this.get<{ access_list: NamespaceAccessResponse[] }>(endpoint);
     }
 } 

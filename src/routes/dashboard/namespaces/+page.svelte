@@ -34,6 +34,8 @@
     let selectedUser = $state<UserResponse | null>(null);
     let isSharing = $state(false);
     let selectedAuthLevel = $state("1"); // Default to read-only access
+    let usersWithAccess = $state<{user: UserResponse, auth_level: number, granted_at: string}[]>([]);
+    let isLoadingAccessList = $state(false);
 
     const accessLevels = [
         { value: "1", label: "Read Only" },
@@ -95,6 +97,7 @@
         SettingsModalOpenState = true;
         fetchDocuments(namespace.id);
         fetchUsers();
+        fetchUsersWithAccess();
     }
 
     function closeSettings() {
@@ -399,6 +402,32 @@
             });
         } finally {
             isLoadingUsers = false;
+        }
+    }
+
+    async function fetchUsersWithAccess() {
+        if (!selectedNamespace) return;
+        
+        isLoadingAccessList = true;
+        try {
+            const response = await api.namespaces.getAccessList(selectedNamespace.id);
+            
+            if (response.error) {
+                throw new Error(response.error);
+            }
+
+            if (response.data) {
+                usersWithAccess = response.data.access_list;
+            }
+        } catch (err) {
+            console.error('Error fetching users with access:', err);
+            toast.create({
+                title: 'Error',
+                description: 'Failed to fetch users with access',
+                type: 'error'
+            });
+        } finally {
+            isLoadingAccessList = false;
         }
     }
 
@@ -750,9 +779,36 @@
                         <div class="space-y-4">
                             <h4 class="h4">Users with Access</h4>
                             <div class="card p-4">
-                                <div class="text-surface-600-400 text-center">
-                                    No users shared with
-                                </div>
+                                {#if isLoadingAccessList}
+                                    <div class="flex justify-center items-center h-32">
+                                        <div class="spinner"></div>
+                                    </div>
+                                {:else if usersWithAccess.length === 0}
+                                    <div class="text-surface-600-400 text-center">
+                                        No users shared with
+                                    </div>
+                                {:else}
+                                    <div class="overflow-x-auto">
+                                        <table class="table caption-bottom min-w-full">
+                                            <thead class="sticky top-0 bg-surface-100-900 z-10">
+                                                <tr>
+                                                    <th>User</th>
+                                                    <th>Access Level</th>
+                                                    <th>Granted At</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {#each usersWithAccess as access}
+                                                    <tr>
+                                                        <td>{access.user.username} ({access.user.email})</td>
+                                                        <td>{accessLevels.find(level => parseInt(level.value) === access.auth_level)?.label || `Level ${access.auth_level}`}</td>
+                                                        <td>{formatDate(access.granted_at)}</td>
+                                                    </tr>
+                                                {/each}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {/if}
                             </div>
                         </div>
                     </div>
