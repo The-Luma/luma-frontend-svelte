@@ -162,29 +162,26 @@
                 return;
             }
 
-            const response = await fetch(`/api/users/${userId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const response = await api.admin.deleteUser(userId);
 
-            if (!response.ok) {
-                throw new Error('Failed to delete user');
+            // 204 No Content is a successful response, no need to check for error
+            if (response.status === 204) {
+                // Refresh the users list
+                await loadUsers();
+                
+                toast.create({
+                    title: 'Success',
+                    description: 'User removed successfully',
+                    type: 'success'
+                });
+            } else {
+                throw new Error(response.error || 'Failed to delete user');
             }
-
-            users = users.filter(u => u.id !== userId);
-            
-            toast.create({
-                title: 'Success',
-                description: 'User removed successfully',
-                type: 'success'
-            });
         } catch (error) {
             console.error('Error deleting user:', error);
             toast.create({
                 title: 'Error',
-                description: 'Failed to delete user. Please try again.',
+                description: error instanceof Error ? error.message : 'Failed to delete user. Please try again.',
                 type: 'error'
             });
         }
@@ -663,7 +660,7 @@
 <Modal
     open={invitationSuccessModalState}
     onOpenChange={(e) => (invitationSuccessModalState = e.open)}
-    contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-lg w-[90vw] md:w-[45vw]"
+    contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-lg w-[45vw] md:w-[65vw]"
     backdropClasses="backdrop-blur-sm"
 >
     {#snippet content()}
@@ -673,14 +670,21 @@
         <article class="space-y-4">
             {#if invitationDetails}
                 <div class="space-y-4">
-                    <div class="space-y-2">
-                        <p class="text-sm text-surface-600-400">An invitation has been sent to:</p>
-                        <p class="font-medium">{invitationDetails.email}</p>
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <p class="text-sm text-surface-600-400">Role:</p>
-                        <p class="font-medium capitalize">{invitationDetails.role}</p>
+                    <div class="grid grid-cols-3 gap-8">
+                        <div>
+                            <p class="text-sm text-surface-600-400">Email:</p>
+                            <p class="font-medium">{invitationDetails.email}</p>
+                        </div>
+                        
+                        <div>
+                            <p class="text-sm text-surface-600-400">Role:</p>
+                            <p class="font-medium capitalize">{invitationDetails.role}</p>
+                        </div>
+                        
+                        <div>
+                            <p class="text-sm text-surface-600-400">Expires at:</p>
+                            <p class="font-medium">{new Date(invitationDetails.expires_at).toLocaleString()}</p>
+                        </div>
                     </div>
                     
                     <div class="space-y-2">
@@ -706,11 +710,6 @@
                                 Copy
                             </button>
                         </div>
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <p class="text-sm text-surface-600-400">Expires at:</p>
-                        <p class="font-medium">{new Date(invitationDetails.expires_at).toLocaleString()}</p>
                     </div>
                 </div>
             {/if}

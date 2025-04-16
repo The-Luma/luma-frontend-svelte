@@ -40,6 +40,14 @@ export abstract class BaseService {
                 },
             });
 
+            // For 204 No Content responses, return immediately with status
+            if (response.status === 204) {
+                return {
+                    data: null as T,
+                    status: response.status
+                };
+            }
+
             const responseData = await response.json();
             console.log('API Response:', { url, status: response.status, data: responseData });
 

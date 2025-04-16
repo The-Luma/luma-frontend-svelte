@@ -55,4 +55,8 @@ export class AdminService extends BaseService {
     async inviteUser(data: InviteUserRequest): Promise<ApiResponse<InviteUserResponse>> {
         return this.post<InviteUserResponse>(API_CONFIG.endpoints.admin.invitations, data);
     }
+
+    async deleteUser(userId: number): Promise<ApiResponse<null>> {
+        return this.delete<null>(`/users/${userId}`);
+    }
 } 
