@@ -317,6 +317,10 @@
     });
 </script>
 
+<svelte:head>
+    <title>Chats | Luma</title>
+</svelte:head>
+
 <section class="card rounded-container flex flex-row h-[calc(100vh-4rem)]">
         <!-- Navigation -->
          <div class="flex flex-col border-r-[1px] bg-surface-50-950 z-51 min-w-[400px] max-w-[400px] border-surface-200-800 h-full overflow-hidden transition-all duration-300 ease-in-out

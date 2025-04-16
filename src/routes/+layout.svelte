@@ -109,6 +109,7 @@
 </script>
 
 <svelte:head>
+	<title>Luma</title>
 	<style>
   		@custom-variant dark (&:is(.dark *));
 	</style>

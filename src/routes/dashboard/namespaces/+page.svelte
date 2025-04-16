@@ -544,11 +544,11 @@
     }
 
     function canUploadDocuments(): boolean {
-        return userAccessLevel >= 2; // Read & Write or Admin level
+        return userAccessLevel ? userAccessLevel >= 2 : false; // Read & Write or Admin level
     }
 
     function canDeleteDocuments(): boolean {
-        return userAccessLevel >= 2; // Read & Write or Admin level
+        return userAccessLevel ? userAccessLevel >= 2 : false; // Read & Write or Admin level
     }
 
     function canDeleteNamespace(): boolean {
@@ -559,6 +559,10 @@
         fetchNamespaces();
     });
 </script>
+
+<svelte:head>
+    <title>Spaces | Luma</title>
+</svelte:head>
 
 <div class="flex-1 flex flex-col w-full h-full overflow-y-auto">
     <div class="grid grid-cols-1 md:grid-cols-[65%_35%] gap-4 p-4">
