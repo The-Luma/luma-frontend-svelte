@@ -23,6 +23,7 @@ export const API_CONFIG = {
             create: '/admin',
             check: '/admin/check',
             users: '/admin/users',
+            listUsers: '/users',
             invitations: '/admin/invitations',
         },
         health: {

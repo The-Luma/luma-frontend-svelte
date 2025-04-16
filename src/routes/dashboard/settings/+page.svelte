@@ -70,19 +70,13 @@
     const loadUsers = async () => {
         isLoading = true;
         try {
-            const response = await fetch('/api/users', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const response = await api.admin.listUsers();
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch users');
+            if (response.error) {
+                throw new Error(response.error);
             }
 
-            const data = await response.json();
-            users = data.users || [];
+            users = response.data?.users || [];
         } catch (error) {
             console.error('Error loading users:', error);
             toast.create({
