@@ -7,6 +7,7 @@
     import type { ToastContext } from '@skeletonlabs/skeleton-svelte';
     import { api } from '$lib/services/api';
     import type { InviteUserResponse } from '$lib/services/admin.service';
+    import IconTrash from '@lucide/svelte/icons/trash-2';
 
     export const toast: ToastContext = getContext('toast');
 
@@ -29,7 +30,6 @@
     
     let inviteModalState = $state(false);
     let inviteEmail = $state('');
-    let inviteRole = $state('Viewer');
     let isInviting = $state(false);
     let invitationDetails = $state<InviteUserResponse | null>(null);
     let invitationSuccessModalState = $state(false);
@@ -56,7 +56,6 @@
     function inviteModalClose() {
         inviteModalState = false;
         inviteEmail = '';
-        inviteRole = 'Viewer';
     }
 
     function invitationSuccessModalClose() {
@@ -111,7 +110,7 @@
         try {
             const response = await api.admin.inviteUser({
                 email: inviteEmail,
-                role: inviteRole.toLowerCase()
+                role: 'user'
             });
 
             if (response.error) {
@@ -390,35 +389,38 @@
                                 {:else if users.length === 0}
                                     <p class="text-center text-surface-600-400">No users found</p>
                                 {:else}
-                                    {#each users as user}
-                                        <div class="card p-4 variant-ghost-surface">
-                                            <div class="grid grid-cols-3 gap-4 items-center">
-                                                <div class="col-span-1">
-                                                    <p class="font-medium">{user.username}</p>
-                                                </div>
-                                                <select 
-                                                    class="col-span-1" 
-                                                    bind:value={user.role}
-                                                    onchange={(e: Event) => {
-                                                        const target = e.target as HTMLSelectElement;
-                                                        if (target) {
-                                                            changeRole(user.id, target.value);
-                                                        }
-                                                    }}
-                                                >
-                                                    <option value="Admin">Admin</option>
-                                                    <option value="Editor">Editor</option>
-                                                    <option value="Viewer">Viewer</option>
-                                                </select>
-                                                <button 
-                                                    class="btn btn-sm preset-filled-error-500 col-span-1"
-                                                    onclick={() => removeUser(user.id)}
-                                                >
-                                                    Remove
-                                                </button>
-                                            </div>
-                                        </div>
-                                    {/each}
+                                    <div class="table-wrap overflow-x-auto">
+                                        <table class="table caption-bottom min-w-full">
+                                            <thead class="sticky top-0 bg-surface-100-900 z-10">
+                                                <tr>
+                                                    <th>Username</th>
+                                                    <th>Role</th>
+                                                    <th class="text-right">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {#each users as user}
+                                                    <tr>
+                                                        <td>{user.username}</td>
+                                                        <td>
+                                                            <span class="badge variant-filled-{user.role === 'admin' ? 'primary' : user.role === 'editor' ? 'secondary' : 'surface'}">
+                                                                {user.role}
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <button 
+                                                                class="btn btn-sm preset-filled-error-500 flex items-center gap-1"
+                                                                onclick={() => removeUser(user.id)}
+                                                            >
+                                                                <IconTrash class="size-4" />
+                                                                <span>Delete</span>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                {/each}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 {/if}
                             </div>
                         </div>
@@ -629,7 +631,6 @@
                     disabled={isInviting}
                 />
             </div>
-            
         </article>
         <footer class="flex justify-end gap-4">
             <button 
