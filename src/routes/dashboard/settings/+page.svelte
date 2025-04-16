@@ -199,154 +199,156 @@
 </script>
 
 {#if isAdmin}
-    <div class="card p-4 preset-filled-surface-100-900 border-[1px] border-surface-200-800 w-full max-w-md">
-        <Tabs value={selectedTab} onValueChange={(e) => (selectedTab = e.value)}>
-            {#snippet list()}
-                <Tabs.Control value="user">User Settings</Tabs.Control>
-                <Tabs.Control value="admin">User Management</Tabs.Control>
-            {/snippet}
-            {#snippet content()}
-                <Tabs.Panel value="user">
-                    <div class="space-y-4">
-                        <h1 class="h1">Settings</h1>
-                        <hr class="hr" />
-                        
-                        <div class='grid gap-4 grid-cols-3 gap-4'>
-                            <div class="col-span-3 grid grid-cols-subgrid">
-                                <h3 class='h6'>Email</h3>
-                                <p class='text-sm text-gray-500'>{email}</p>
-                            </div>
-                            
-                            <h3 class='h6'>Username</h3>
-                            <p class="text-sm text-gray-500" id='username'>{username}</p>
-                            <button 
-                                type="button" 
-                                class="btn btn-sm preset-filled" 
-                                id='change_username'
-                                onclick={() => usernameModalState = true}
-                            >
-                                Change Username
-                            </button>
-
-                            <h3 class='h6'>Password</h3>
-                            <p class="text-sm text-gray-500" id='password'>{password}</p>
-                            <button 
-                                type="button" 
-                                class="btn btn-sm preset-filled" 
-                                id='change_password'
-                                onclick={() => passwordModalState = true}
-                            >
-                                Change Password
-                            </button>
-                        </div>
-
-                        <hr class="hr" />
-                        <div class="flex justify-center">
-                            <button class="btn preset-filled-error-500 w-full" onclick={handleLogout}>
-                                Logout
-                            </button>
-                        </div>
-                    </div>
-                </Tabs.Panel>
-                
-                <Tabs.Panel value="admin">
-                    <div class="space-y-4">
-                        <h1 class="h1">User Management</h1>
-                        <hr class="hr" />
-                        
-                        <div class="flex justify-between items-center">
-                            <h3 class="h6">Manage Users</h3>
-                            <button class="btn btn-sm preset-filled" onclick={() => inviteModalState = true}>
-                                Invite User
-                            </button>
-                        </div>
-
+    <div class="card rounded-container flex flex-row h-[calc(100vh-4rem)]">
+        <div class="flex flex-col w-full p-4">
+            <Tabs value={selectedTab} onValueChange={(e) => (selectedTab = e.value)}>
+                {#snippet list()}
+                    <Tabs.Control value="user">User Settings</Tabs.Control>
+                    <Tabs.Control value="admin">User Management</Tabs.Control>
+                {/snippet}
+                {#snippet content()}
+                    <Tabs.Panel value="user">
                         <div class="space-y-4">
-                            {#if isLoading}
-                                <div class="flex justify-center">
-                                    <div class="spinner"></div>
+                            <h2 class="h2">Settings</h2>
+                            <hr class="hr" />
+                            
+                            <div class='grid gap-4 grid-cols-3 gap-4'>
+                                <div class="col-span-3 grid grid-cols-subgrid">
+                                    <h3 class='h6'>Email</h3>
+                                    <p class='text-sm text-surface-600-400'>{email}</p>
                                 </div>
-                            {:else if users.length === 0}
-                                <p class="text-center text-gray-500">No users found</p>
-                            {:else}
-                                {#each users as user}
-                                    <div class="card p-4 variant-ghost-surface">
-                                        <div class="grid grid-cols-3 gap-4 items-center">
-                                            <div class="col-span-1">
-                                                <p class="font-medium">{user.username}</p>
-                                            </div>
-                                            <select 
-                                                class="col-span-1" 
-                                                bind:value={user.role}
-                                                onchange={(e: Event) => {
-                                                    const target = e.target as HTMLSelectElement;
-                                                    if (target) {
-                                                        changeRole(user.id, target.value);
-                                                    }
-                                                }}
-                                            >
-                                                <option value="Admin">Admin</option>
-                                                <option value="Editor">Editor</option>
-                                                <option value="Viewer">Viewer</option>
-                                            </select>
-                                            <button 
-                                                class="btn btn-sm preset-filled-error-500 col-span-1"
-                                                onclick={() => removeUser(user.id)}
-                                            >
-                                                Remove
-                                            </button>
-                                        </div>
-                                    </div>
-                                {/each}
-                            {/if}
+                                
+                                <h3 class='h6'>Username</h3>
+                                <p class="text-sm text-surface-600-400" id='username'>{username}</p>
+                                <button 
+                                    type="button" 
+                                    class="btn btn-sm preset-filled" 
+                                    id='change_username'
+                                    onclick={() => usernameModalState = true}
+                                >
+                                    Change Username
+                                </button>
+
+                                <h3 class='h6'>Password</h3>
+                                <p class="text-sm text-surface-600-400" id='password'>{password}</p>
+                                <button 
+                                    type="button" 
+                                    class="btn btn-sm preset-filled" 
+                                    id='change_password'
+                                    onclick={() => passwordModalState = true}
+                                >
+                                    Change Password
+                                </button>
+                            </div>
+
+                            <hr class="hr" />
+                            <div class="flex justify-end">
+                                <button class="btn btn-sm preset-filled-error-500" onclick={handleLogout}>
+                                    Logout
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </Tabs.Panel>
-            {/snippet}
-        </Tabs>
+                    </Tabs.Panel>
+                    
+                    <Tabs.Panel value="admin">
+                        <div class="space-y-4">
+                            <h2 class="h2">User Management</h2>
+                            <hr class="hr" />
+                            
+                            <div class="flex justify-between items-center">
+                                <h3 class="h6">Manage Users</h3>
+                                <button class="btn btn-sm preset-filled" onclick={() => inviteModalState = true}>
+                                    Invite User
+                                </button>
+                            </div>
+
+                            <div class="space-y-4">
+                                {#if isLoading}
+                                    <div class="flex justify-center">
+                                        <div class="spinner"></div>
+                                    </div>
+                                {:else if users.length === 0}
+                                    <p class="text-center text-surface-600-400">No users found</p>
+                                {:else}
+                                    {#each users as user}
+                                        <div class="card p-4 variant-ghost-surface">
+                                            <div class="grid grid-cols-3 gap-4 items-center">
+                                                <div class="col-span-1">
+                                                    <p class="font-medium">{user.username}</p>
+                                                </div>
+                                                <select 
+                                                    class="col-span-1" 
+                                                    bind:value={user.role}
+                                                    onchange={(e: Event) => {
+                                                        const target = e.target as HTMLSelectElement;
+                                                        if (target) {
+                                                            changeRole(user.id, target.value);
+                                                        }
+                                                    }}
+                                                >
+                                                    <option value="Admin">Admin</option>
+                                                    <option value="Editor">Editor</option>
+                                                    <option value="Viewer">Viewer</option>
+                                                </select>
+                                                <button 
+                                                    class="btn btn-sm preset-filled-error-500 col-span-1"
+                                                    onclick={() => removeUser(user.id)}
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        </div>
+                                    {/each}
+                                {/if}
+                            </div>
+                        </div>
+                    </Tabs.Panel>
+                {/snippet}
+            </Tabs>
+        </div>
     </div>
 {:else}
-    <div class="card p-4 preset-filled-surface-100-900 border-[1px] border-surface-200-800 w-full max-w-md">
-        <h1 class="h1">Settings</h1>
-        <br />
-        <hr class="hr" />
-        <br />
-        
-        <div class='grid gap-4 grid-cols-3 gap-4' >
-            <div class="col-span-3 grid grid-cols-subgrid">
-                <h3 class='h6'>Email</h3>
-                <p class='text-sm text-gray-500'>{email}</p>
-            </div>
+    <div class="card rounded-container flex flex-row h-[calc(100vh-4rem)]">
+        <div class="flex flex-col w-full p-4">
+            <h2 class="h2">Settings</h2>
+            <hr class="hr my-4" />
             
-            <h3 class='h6'>Username</h3>
-            <p class="text-sm text-gray-500" id='username'>{username}</p>
-            <button 
-                type="button" 
-                class="btn btn-sm preset-filled" 
-                id='change_username'
-                onclick={() => usernameModalState = true}
-            >
-                Change Username
-            </button>
+            <div class='grid gap-4 grid-cols-3 gap-4'>
+                <div class="col-span-3 grid grid-cols-subgrid">
+                    <h3 class='h6'>Email</h3>
+                    <p class='text-sm text-surface-600-400'>{email}</p>
+                </div>
+                
+                <h3 class='h6'>Username</h3>
+                <p class="text-sm text-surface-600-400" id='username'>{username}</p>
+                <button 
+                    type="button" 
+                    class="btn btn-sm preset-filled" 
+                    id='change_username'
+                    onclick={() => usernameModalState = true}
+                >
+                    Change Username
+                </button>
 
-            <h3 class='h6'>Password</h3>
-            <p class="text-sm text-gray-500" id='password'>{password}</p>
-            <button 
-                type="button" 
-                class="btn btn-sm preset-filled" 
-                id='change_password'
-                onclick={() => passwordModalState = true}
-            >
-                Change Password
-            </button>
-        </div>
+                <h3 class='h6'>Password</h3>
+                <p class="text-sm text-surface-600-400" id='password'>{password}</p>
+                <button 
+                    type="button" 
+                    class="btn btn-sm preset-filled" 
+                    id='change_password'
+                    onclick={() => passwordModalState = true}
+                >
+                    Change Password
+                </button>
+            </div>
 
-        <hr class="hr my-8" />
-        
-        <div class="flex justify-center">
-            <button class="btn preset-filled-error-500 w-full" onclick={handleLogout}>
-                Logout
-            </button>
+            <hr class="hr my-8" />
+            
+            <div class="flex justify-end">
+                <button class="btn btn-sm preset-filled-error-500" onclick={handleLogout}>
+                    Logout
+                </button>
+            </div>
         </div>
     </div>
 {/if}
@@ -355,7 +357,7 @@
 <Modal
     open={usernameModalState}
     onOpenChange={(e) => (usernameModalState = e.open)}
-    contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-sm"
+    contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-lg w-[90vw] md:w-[45vw]"
     backdropClasses="backdrop-blur-sm"
 >
     {#snippet content()}
@@ -404,7 +406,7 @@
 <Modal
     open={passwordModalState}
     onOpenChange={(e) => (passwordModalState = e.open)}
-    contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-sm"
+    contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-lg w-[90vw] md:w-[45vw]"
     backdropClasses="backdrop-blur-sm"
 >
     {#snippet content()}
@@ -520,7 +522,7 @@
 <Modal
     open={inviteModalState}
     onOpenChange={(e) => (inviteModalState = e.open)}
-    contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-sm"
+    contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-lg w-[90vw] md:w-[45vw]"
     backdropClasses="backdrop-blur-sm"
 >
     {#snippet content()}
