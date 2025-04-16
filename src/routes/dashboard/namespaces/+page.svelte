@@ -364,11 +364,11 @@
     });
 </script>
 
-<div class="flex-1 flex flex-col w-full overflow-scroll h-[calc(100vh - 160px)]">
-    <div class="grid grid-cols-1 md:grid-cols-[65%_35%] gap-4">
+<div class="flex-1 flex flex-col w-full h-full overflow-y-auto">
+    <div class="grid grid-cols-1 md:grid-cols-[65%_35%] gap-4 p-4">
         <!-- Left Section - Table -->
-        <div class="card w-full h-full p-4">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center m-5 gap-4">
+        <div class="card w-full p-4 flex flex-col">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
                 <h1 class="h1 whitespace-nowrap">My Spaces</h1>
                 <div class="flex justify-end w-full sm:w-auto">
                     <button 
@@ -390,9 +390,9 @@
                     No namespaces found. Create your first namespace to get started.
                 </div>
             {:else}
-            <div class="table-wrap overflow-x-auto max-h-[200px] overflow-y-auto">
+            <div class="table-wrap overflow-x-auto">
                 <table class="table caption-bottom min-w-full">
-                    <thead>
+                    <thead class="sticky top-0 bg-surface-100-900 z-10">
                         <tr>
                             <th>Name</th>
                             <th>Description</th>
@@ -424,41 +424,24 @@
 
         <!-- Right Section - Explanation -->
         <div class="card w-full p-4">
-            <div class="space-y-6">
-                <h2 class="h2">About Spaces</h2>
-                
-                <div class="space-y-4">
-                    <div>
-                        <h3 class="h3">What are Spaces?</h3>
-                        <p class="text-surface-600-400">
-                            Spaces are isolated environments where you can organize your conversations, files, and collaborate with others. Each space has its own set of permissions and can be either public or private.
-                        </p>
-                    </div>
-
-                    <div>
-                        <h3 class="h3">Key Features</h3>
-                        <ul class="list-disc list-inside space-y-2 text-surface-600-400">
-                            <li>Organize conversations and files</li>
-                            <li>Control access with public/private settings</li>
-                            <li>Collaborate with team members</li>
-                            <li>Manage permissions and sharing</li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <h3 class="h3">Getting Started</h3>
-                        <p class="text-surface-600-400">
-                            Create your first space by clicking the "Create Space" button. You can then:
-                        </p>
-                        <ul class="list-disc list-inside space-y-2 text-surface-600-400 mt-2">
-                            <li>Start conversations within the space</li>
-                            <li>Upload and manage files</li>
-                            <li>Invite team members to collaborate</li>
-                            <li>Configure space settings</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <h2 class="h2 mb-4">About Spaces</h2>
+            <p class="mb-4">
+                Spaces are dedicated environments where you can organize your conversations and files. Each space can be customized with its own settings and access controls.
+            </p>
+            <h3 class="h3 mb-2">Features:</h3>
+            <ul class="list-disc list-inside space-y-2 mb-4">
+                <li>Organize conversations by topic or project</li>
+                <li>Upload and manage files within each space</li>
+                <li>Control access and sharing permissions</li>
+                <li>Customize space settings and appearance</li>
+            </ul>
+            <h3 class="h3 mb-2">Getting Started:</h3>
+            <ol class="list-decimal list-inside space-y-2">
+                <li>Create a new space using the "Create Space" button</li>
+                <li>Add a descriptive name and details</li>
+                <li>Start conversations or upload files</li>
+                <li>Manage access and settings as needed</li>
+            </ol>
         </div>
     </div>
 </div>
