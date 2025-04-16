@@ -5,6 +5,7 @@
     import { Tabs, Modal } from '@skeletonlabs/skeleton-svelte';
     import { getContext } from 'svelte';
     import type { ToastContext } from '@skeletonlabs/skeleton-svelte';
+    import { api } from '$lib/services/api';
 
     export const toast: ToastContext = getContext('toast');
 
@@ -16,6 +17,8 @@
 
     let usernameModalState = $state(false);
     let newUsername = $state('');
+    let usernamePassword = $state('');
+    let isUpdatingUsername = $state(false);
     
     let passwordModalState = $state(false);
     let currentPassword = $state('');
@@ -39,6 +42,8 @@
 
     function userModalClose() {
         usernameModalState = false;
+        newUsername = '';
+        usernamePassword = '';
     }
 
     function passwordModalClose() {
@@ -194,6 +199,127 @@
             goto('/login');
         } catch (error) {
             console.error('Error during logout:', error);
+        }
+    };
+
+    const updateUsername = async () => {
+        if (!newUsername.trim()) {
+            toast.create({
+                title: 'Error',
+                description: 'Username cannot be empty',
+                type: 'error'
+            });
+            return;
+        }
+        if (!usernamePassword.trim()) {
+            toast.create({
+                title: 'Error',
+                description: 'Current password is required',
+                type: 'error'
+            });
+            return;
+        }
+
+        isUpdatingUsername = true;
+        try {
+            const response = await api.auth.changeUsername({
+                new_username: newUsername,
+                password: usernamePassword
+            });
+
+            if (response.error) {
+                throw new Error(response.error);
+            }
+
+            // Update the local username
+            username = newUsername;
+            
+            // Refresh user details to ensure all data is up to date
+            const userResponse = await api.auth.me();
+            if (userResponse.data) {
+                // Update the auth store with the latest user data
+                auth.setUser(userResponse.data);
+            }
+            
+            userModalClose();
+            toast.create({
+                title: 'Success',
+                description: 'Username updated successfully',
+                type: 'success'
+            });
+        } catch (error) {
+            console.error('Error updating username:', error);
+            toast.create({
+                title: 'Error',
+                description: error instanceof Error ? error.message : 'Failed to update username',
+                type: 'error'
+            });
+        } finally {
+            isUpdatingUsername = false;
+        }
+    };
+
+    const updatePassword = async () => {
+        if (!currentPassword.trim()) {
+            toast.create({
+                title: 'Error',
+                description: 'Current password is required',
+                type: 'error'
+            });
+            return;
+        }
+        if (!newPassword.trim()) {
+            toast.create({
+                title: 'Error',
+                description: 'New password is required',
+                type: 'error'
+            });
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            toast.create({
+                title: 'Error',
+                description: 'New passwords do not match',
+                type: 'error'
+            });
+            return;
+        }
+        if (newPassword.length < 8) {
+            toast.create({
+                title: 'Error',
+                description: 'New password must be at least 8 characters long',
+                type: 'error'
+            });
+            return;
+        }
+
+        isUpdatingPassword = true;
+        try {
+            const response = await api.auth.changePassword({
+                current_password: currentPassword,
+                new_password: newPassword
+            });
+
+            if (response.error) {
+                throw new Error(response.error);
+            }
+
+            password = '********';
+            passwordModalClose();
+            toast.create({
+                title: 'Success',
+                description: 'Password updated successfully',
+                type: 'success'
+            });
+        } catch (error) {
+            console.error('Error updating password:', error);
+            toast.create({
+                title: 'Error',
+                description: error instanceof Error ? error.message : 'Failed to update password',
+                type: 'error'
+            });
+        } finally {
+            isUpdatingPassword = false;
         }
     };
 </script>
@@ -365,7 +491,7 @@
         <h2 class="h2">Update Username</h2>
         </header>
         <article class="space-y-4">
-        <p class="text-sm text-gray-500">Enter your new username below.</p>
+        <p class="text-sm text-gray-500">Enter your new username and current password to confirm the change.</p>
         <div class="space-y-2">
             <label class="label" for="newUsername">New Username</label>
             <input 
@@ -374,29 +500,41 @@
             bind:value={newUsername}
             class="input"
             placeholder="Enter new username"
+            disabled={isUpdatingUsername}
+            />
+        </div>
+        <div class="space-y-2">
+            <label class="label" for="usernamePassword">Current Password</label>
+            <input 
+            type="password" 
+            id="usernamePassword"
+            bind:value={usernamePassword}
+            class="input"
+            placeholder="Enter current password"
+            disabled={isUpdatingUsername}
             />
         </div>
         </article>
         <footer class="flex justify-end gap-4">
-        <button type="button" class="btn preset-tonal" onclick={userModalClose}>Cancel</button>
+        <button 
+            type="button" 
+            class="btn preset-tonal" 
+            onclick={userModalClose}
+            disabled={isUpdatingUsername}
+        >
+            Cancel
+        </button>
         <button 
             type="button" 
             class="btn preset-filled" 
-            onclick={() => {
-            if (newUsername.trim()) {
-                username = newUsername;
-                newUsername = '';
-                userModalClose();
-            } else {
-                toast.create({
-                title: 'Error',
-                description: 'Username cannot be empty',
-                type: 'error'
-                });
-            }
-            }}
+            onclick={updateUsername}
+            disabled={isUpdatingUsername}
         >
+            {#if isUpdatingUsername}
+            Updating...
+            {:else}
             Update Username
+            {/if}
         </button>
         </footer>
     {/snippet}
@@ -460,52 +598,7 @@
         <button 
             type="button" 
             class="btn preset-filled" 
-            onclick={() => {
-            if (!currentPassword.trim()) {
-                toast.create({
-                title: 'Error',
-                description: 'Current password is required',
-                type: 'error'
-                });
-                return;
-            }
-            if (!newPassword.trim()) {
-                toast.create({
-                title: 'Error',
-                description: 'New password is required',
-                type: 'error'
-                });
-                return;
-            }
-            if (newPassword !== confirmPassword) {
-                toast.create({
-                title: 'Error',
-                description: 'New passwords do not match',
-                type: 'error'
-                });
-                return;
-            }
-            if (newPassword.length < 313) {
-                toast.create({
-                title: 'Error',
-                description: 'New password must be at least 8 characters long',
-                type: 'error'
-                });
-                return;
-            }
-
-            isUpdatingPassword = true;
-            // TODO: Implement actual password update API call
-            setTimeout(() => {
-                password = '********';
-                passwordModalClose();
-                toast.create({
-                title: 'Success',
-                description: 'Password updated successfully',
-                type: 'success'
-                });
-            }, 1000);
-            }}
+            onclick={updatePassword}
             disabled={isUpdatingPassword}
         >
             {#if isUpdatingPassword}

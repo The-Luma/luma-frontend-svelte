@@ -1,6 +1,7 @@
 import type { ApiResponse, ApiError as IApiError } from '$lib/types/api.types';
 import { API_CONFIG } from '$lib/config/api.config';
-import { api } from './api';
+// Remove the circular dependency by not importing api directly
+// import { api } from './api';
 
 export class HttpError extends Error {
     constructor(
@@ -43,12 +44,24 @@ export abstract class BaseService {
             console.log('API Response:', { url, status: response.status, data: responseData });
 
             // Handle 401 Unauthorized errors by attempting token refresh
-            if (response.status === 401 && endpoint !== API_CONFIG.endpoints.auth.refresh) {
+            // Make exceptions for username and password change endpoints
+            const isAuthEndpoint = endpoint === API_CONFIG.endpoints.auth.changeUsername || 
+                                  endpoint === API_CONFIG.endpoints.auth.changePassword;
+            
+            if (response.status === 401 && endpoint !== API_CONFIG.endpoints.auth.refresh && !isAuthEndpoint) {
                 console.log('Attempting token refresh...');
-                const refreshResponse = await api.auth.refreshToken();
+                // Instead of using api.auth.refreshToken(), use a direct fetch call
+                const refreshUrl = this.buildUrl(API_CONFIG.endpoints.auth.refresh);
+                const refreshResponse = await fetch(refreshUrl, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: this.defaultHeaders,
+                });
                 
-                if (refreshResponse.error) {
-                    console.error('Token refresh failed:', refreshResponse.error);
+                const refreshData = await refreshResponse.json();
+                
+                if (!refreshResponse.ok || refreshData.error) {
+                    console.error('Token refresh failed:', refreshData.error);
                     return {
                         error: 'Session expired. Please login again.',
                         status: 401
