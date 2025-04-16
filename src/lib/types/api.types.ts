@@ -46,7 +46,10 @@ export interface RevokeNamespaceRequest {
 
 // Chat Types
 export interface ChatMessage {
+    id: number;
     content: string;
+    sender_type: string;
+    time_sent: string;
     conversation_id: number;
 }
 
@@ -56,17 +59,17 @@ export interface ChatStart {
 
 export interface Conversation {
     id: number;
+    user_id: number;
     namespace_id: number;
-    created_at: string;
-    updated_at: string;
+    started_at: string;
     messages: ChatMessage[];
 }
 
 export interface ConversationListItem {
     id: number;
+    user_id: number;
     namespace_id: number;
-    created_at: string;
-    updated_at: string;
+    started_at: string;
 }
 
 // File Types

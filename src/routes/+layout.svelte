@@ -177,9 +177,8 @@
 				</div>
 
 				<!-- Main Content -->
-				<main class="p-2 overflow-auto">
 					{@render children?.()}
-				</main>
+			
 			</div>
 
 			<!-- Mobile Navigation Bar -->

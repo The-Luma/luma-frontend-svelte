@@ -24,7 +24,11 @@ export class ChatService extends BaseService {
 
     async getHistory(conversationId: number): Promise<ApiResponse<Conversation>> {
         const endpoint = API_CONFIG.endpoints.chats.history.replace(':id', conversationId.toString());
-        return this.get<Conversation>(endpoint);
+        const response = await this.get<{ conversation: Conversation }>(endpoint);
+        return {
+            ...response,
+            data: response.data?.conversation
+        };
     }
 
     async list(query?: NamespaceQuery): Promise<ApiResponse<ConversationListItem[]>> {
@@ -32,7 +36,11 @@ export class ChatService extends BaseService {
         if (query?.include_public !== undefined) {
             params.include_public = query.include_public ? 'true' : 'false';
         }
-        return this.get<ConversationListItem[]>(API_CONFIG.endpoints.chats.list, { params });
+        const response = await this.get<{ conversations: ConversationListItem[] }>(API_CONFIG.endpoints.chats.list, { params });
+        return {
+            ...response,
+            data: response.data?.conversations
+        };
     }
 
     async deleteConversation(conversationId: number): Promise<ApiResponse<void>> {

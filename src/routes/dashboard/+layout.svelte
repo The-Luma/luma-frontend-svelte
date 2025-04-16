@@ -27,7 +27,7 @@
     };
 </script>
 
-<div class="flex flex-col w-full h-full">
+<div class="flex w-full h-full p-4">
     <!-- Grid Columns -->
         <!-- Main Content -->
         <main class="w-full bg-surface-50-900">

@@ -36,11 +36,11 @@ export const API_CONFIG = {
             revoke: '/namespaces/:id/revoke',
         },
         chats: {
-            start: '/chats/start',
-            send: '/chats/message',
-            history: '/chats/:id/history',
-            list: '/chats',
-            delete: '/chats/:id',
+            start: '/chat/start',
+            send: '/chat/message',
+            history: '/chat/:id',
+            list: '/chat',
+            delete: '/chat/:id',
         },
         files: {
             upload: '/documents/upload/:id',

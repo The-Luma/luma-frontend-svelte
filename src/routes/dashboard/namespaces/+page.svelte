@@ -321,15 +321,10 @@
                 throw new Error('Failed to download document');
             }
             
-            // Get the filename from the Content-Disposition header
-            const contentDisposition = response.headers.get('Content-Disposition');
-            let filename = 'document';
-            
-            if (contentDisposition) {
-                const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-                if (filenameMatch && filenameMatch[1]) {
-                    filename = filenameMatch[1];
-                }
+            // Get the document from our local state to get the original filename
+            const doc = documents.find(d => d.id === documentId);
+            if (!doc) {
+                throw new Error('Document not found');
             }
             
             // Create a blob from the response
@@ -339,15 +334,15 @@
             const url = window.URL.createObjectURL(blob);
             
             // Create a temporary link element
-            const a = document.createElement('a');
+            const a = window.document.createElement('a');
             a.href = url;
-            a.download = filename;
+            a.download = doc.name; // Use the original filename
             
             // Append to the document, click it, and remove it
-            document.body.appendChild(a);
+            window.document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            window.document.body.removeChild(a);
             
             toast.create({
                 title: 'Success',
