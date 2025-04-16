@@ -454,6 +454,9 @@
             // Reset selection
             selectedUser = null;
             selectedAuthLevel = "1"; // Reset to default
+            
+            // Refresh the access list
+            await fetchUsersWithAccess();
         } catch (err) {
             console.error('Error sharing namespace:', err);
             toast.create({
