@@ -351,7 +351,7 @@
                         {#if bubble.host}
                             <div class="grid grid-cols-[1fr_auto] gap-2 justify-items-end">
                                 <div class="card py-1 px-4 rounded-tr-none preset-tonal-secondary flex items-center">
-                                    <p class="text-lg text-center w-full">{bubble.message}</p>
+                                    <p class="text-lg text-center">{bubble.message}</p>
                                 </div>
                                 <SpaceAvatar 
                                     name="You"
@@ -378,23 +378,45 @@
             </section>
             <!-- Prompt -->
             <section class="border-t-[1px] border-surface-200-800 p-4">
-                <div class="input-group grid-cols-[1fr_auto] divide-x divide-surface-200-800 rounded-container-token">
-                    <textarea
-                        bind:value={currentMessage}
-                        class="bg-transparent border-0 ring-0 py-2 px-4 text-lg min-h-[60px]"
-                        name="prompt"
-                        placeholder="Write a message..."
-                        rows="1"
-                        onkeydown={onPromptKeydown}
-                        disabled={!currentConversation}
-                    ></textarea>
-                    <button 
-                        class="input-group-cell {currentMessage ? 'preset-filled-primary-500' : 'preset-tonal'} px-4" 
-                        onclick={sendMessage}
-                        disabled={!currentConversation}
-                    >
-                        <IconSend class="size-5" />
-                    </button>
+                <div class="flex items-start gap-2">
+                    <div class="flex flex-col gap-2">
+                        <button 
+                            class="btn-icon preset-tonal" 
+                            onclick={() => DeleteChatModalOpenState = true}
+                            disabled={!currentConversation || isDeleting}
+                            title="Delete Chat"
+                        >
+                            <IconTrash class="size-4" />
+                        </button>
+                        <a 
+                            href="/dashboard/namespaces" 
+                            class="btn-icon preset-tonal"
+                            title="Manage Spaces"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"></path>
+                                <path d="M3 9V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"></path>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="input-group grid-cols-[1fr_auto] divide-x divide-surface-200-800 rounded-container-token flex-1">
+                        <textarea
+                            bind:value={currentMessage}
+                            class="bg-transparent border-0 ring-0 py-3 px-4 text-lg h-[72px] resize-none"
+                            name="prompt"
+                            placeholder="Write a message..."
+                            rows="1"
+                            onkeydown={onPromptKeydown}
+                            disabled={!currentConversation}
+                        ></textarea>
+                        <button 
+                            class="input-group-cell {currentMessage ? 'preset-filled-primary-500' : 'preset-tonal'} px-4" 
+                            onclick={sendMessage}
+                            disabled={!currentConversation}
+                        >
+                            <IconSend class="size-5" />
+                        </button>
+                    </div>
                 </div>
             </section>
         </div>
