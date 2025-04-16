@@ -3,7 +3,7 @@
 	import { ToastProvider, type ToastContext } from '@skeletonlabs/skeleton-svelte';
 	import { Navigation } from '@skeletonlabs/skeleton-svelte';
 	import { getContext } from 'svelte';
-	import { checkServerUp, checkAuth, checkAdminSetup, setupTokenRefresh, isLoading, isAuthenticated, isServerUp, auth } from '$lib/stores/auth';
+	import { checkServerUp, checkAuth, checkAdminSetup, setupTokenRefresh, isLoading, isAuthenticated, isServerUp, auth, isAdminSetup } from '$lib/stores/auth';
 	import { onMount, onDestroy } from 'svelte';
 	import { initializeTheme } from '$lib/stores/theme';
 	import { browser } from '$app/environment';
@@ -69,50 +69,36 @@
 		}
 	}
 
-	async function initializeAuth() {
-		if (!browser || initialized) return;
+	onMount(async () => {
+		if (!browser) return;
 
-		try {
-			if (!$isServerUp) {
-				const isUp = await checkServerUp();
-				if (!isUp) {
-					// toast.create({
-					// 	title: 'Error',
-					// 	description: 'Backend service is unavailable.',
-					// 	type: 'error'
-					// });
-					return;
-				}
-			}
-
-			// Skip auth check if we're already authenticated (e.g. after login)
-			if (!$isAuthenticated) {
-				const isAuthed = await checkAuth();
-				if (isAuthed) {
-					cleanupTokenRefresh = setupTokenRefresh();
-				}
-			}
-			await checkAdminSetup();
-		} catch (error) {
-			console.error('Error during auth initialization:', error);
-		} finally {
-			initialized = true;
-		}
-	}
-
-	onMount(() => {
-		// Apply saved theme on mount
-		const savedTheme = localStorage.getItem('theme');
-		if (savedTheme) {
-			document.documentElement.setAttribute('data-theme', savedTheme);
-		}
-		// Apply saved dark mode
-		const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-		if (savedDarkMode) {
-			document.documentElement.classList.add('dark');
-		}
-		initializeAuth();
+		// Initialize theme
 		initializeTheme();
+
+		// Check server status
+		await checkServerUp();
+
+		// Only proceed with auth checks if server is up
+		if ($isServerUp) {
+			// Check admin setup status
+			await checkAdminSetup();
+
+			// If admin is not set up, redirect to admin setup
+			if (!$isAdminSetup) {
+				goto('/admin-setup');
+				return;
+			}
+
+			// Check authentication status
+			await checkAuth();
+
+			// If authenticated, setup token refresh
+			if ($isAuthenticated) {
+				cleanupTokenRefresh = setupTokenRefresh();
+			}
+		}
+
+		initialized = true;
 	});
 
 	onDestroy(() => {
@@ -193,16 +179,10 @@
 						</Navigation.Tile>
 					</Navigation.Bar>
 				</div>
-
 			</div>
-
-
 		</div>
 	{:else}
-		<!-- Simple layout for non-dashboard pages -->
-		<main class="h-full">
-			{@render children?.()}
-		</main>
+		{@render children?.()}
 	{/if}
 </ToastProvider>
 

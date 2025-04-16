@@ -35,4 +35,8 @@ export class AuthService extends BaseService {
     async changePassword(data: { current_password: string; new_password: string }): Promise<ApiResponse<void>> {
         return this.put<void>(API_CONFIG.endpoints.auth.changePassword, data);
     }
+
+    async registerWithInvitation(data: { username: string; password: string; invitation_token: string }): Promise<ApiResponse<LoginResponse>> {
+        return this.post<LoginResponse>(API_CONFIG.endpoints.auth.register, data);
+    }
 } 
