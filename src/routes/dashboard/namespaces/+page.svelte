@@ -367,9 +367,9 @@
 <div class="flex-1 flex flex-col w-full h-full overflow-y-auto">
     <div class="grid grid-cols-1 md:grid-cols-[65%_35%] gap-4 p-4">
         <!-- Left Section - Table -->
-        <div class="card w-full p-4 flex flex-col">
+        <div class="card w-full flex flex-col">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-                <h1 class="h1 whitespace-nowrap">My Spaces</h1>
+                <h2 class="h2">Spaces</h2>
                 <div class="flex justify-end w-full sm:w-auto">
                     <button 
                         type="button" 
@@ -426,7 +426,7 @@
         <div class="card w-full p-4">
             <h2 class="h2 mb-4">About Spaces</h2>
             <p class="mb-4">
-                Spaces are dedicated environments where you can organize your conversations and files. Each space can be customized with its own settings and access controls.
+                Spaces are dedicated environments where you can organize your files used for chats. All files can be discarded after use. Each space can be shared with other users.
             </p>
             <h3 class="h3 mb-2">Features:</h3>
             <ul class="list-disc list-inside space-y-2 mb-4">

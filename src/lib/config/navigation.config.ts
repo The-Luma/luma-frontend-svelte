@@ -21,16 +21,10 @@ export const navigationItems: NavigationItem[] = [
     },
     {
         id: 'namespaces',
-        label: 'My Spaces',
+        label: 'Spaces',
         icon: IconLayers,
         path: '/dashboard/namespaces'
-    },
-    {
-        id: 'profile',
-        label: 'My Profile',
-        icon: IconUser,
-        path: '/dashboard/profile'
-    },
+    }
 ];
 
 export const settingsItem: NavigationItem = {
