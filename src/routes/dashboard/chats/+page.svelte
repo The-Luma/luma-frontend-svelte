@@ -11,6 +11,7 @@
     import IconX from '@lucide/svelte/icons/x';
     import IconTrash from '@lucide/svelte/icons/trash-2';
     import SpaceAvatar from '$lib/components/SpaceAvatar.svelte';
+    import TypingIndicator from '$lib/components/TypingIndicator.svelte';
 
     export const toast: ToastContext = getContext('toast');
 
@@ -28,6 +29,10 @@
     let namespaces = $state<Namespace[]>([]);
     let namespaceMap = $state<Record<number, { name: string }>>({});
     let isLoadingNamespaces = $state(false);
+    let messageFeed = $state<MessageFeed[]>([]);
+    let isWaitingForResponse = $state(false);
+    let responseStartTime = $state<number | null>(null);
+    let responseTime = $state<number | null>(null);
 
     interface MessageFeed {
         id: number;
@@ -38,7 +43,15 @@
         color: string;
     }
 
-    let messageFeed: MessageFeed[] = [];
+    interface AIResponse {
+        message: {
+            content: string;
+            conversation_id: number;
+            id: number;
+            sender_type: string;
+            time_sent: string;
+        }
+    }
 
     function formatDate(dateString: string): string {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -178,9 +191,14 @@
             message: userMessage,
             color: 'preset-tonal-primary'
         };
+        
+        // Update message feed with user message
         messageFeed = [...messageFeed, userMsg];
+        isWaitingForResponse = true;
+        responseStartTime = Date.now();
+        responseTime = null;
 
-        // Scroll to bottom
+        // Scroll to bottom for user message
         setTimeout(() => {
             if (autoScrollEnabled) scrollChatBottom('smooth');
         }, 0);
@@ -195,20 +213,28 @@
                 throw new Error(response.error);
             }
 
-            if (response.data) {
+            if (response.data && 'message' in response.data) {
+                const aiResponse = response.data as AIResponse;
+                // Calculate response time
+                if (responseStartTime) {
+                    responseTime = Date.now() - responseStartTime;
+                }
+                
                 // Add AI response to feed
                 const aiMsg: MessageFeed = {
-                    id: messageFeed.length + 1,
+                    id: messageFeed.length,
                     host: false,
                     name: 'AI',
-                    timestamp: formatDate(new Date().toISOString()),
-                    message: response.data.content,
+                    timestamp: formatDate(aiResponse.message.time_sent),
+                    message: aiResponse.message.content,
                     color: 'preset-tonal-secondary'
                 };
+                
+                // Update message feed with AI message
                 messageFeed = [...messageFeed, aiMsg];
 
                 // Scroll to bottom for AI response
-        setTimeout(() => scrollChatBottom('smooth'), 0);
+                setTimeout(() => scrollChatBottom('smooth'), 0);
             }
         } catch (err) {
             console.error('Error sending message:', err);
@@ -217,6 +243,9 @@
                 description: 'Failed to send message',
                 type: 'error'
             });
+        } finally {
+            isWaitingForResponse = false;
+            responseStartTime = null;
         }
     }
 
@@ -333,7 +362,7 @@
         <!-- Chat -->
         <div class="grid grid-rows-[1fr_auto] h-full">
             <!-- Conversation -->
-            <section bind:this={elemChat} class="p-4 overflow-y-auto space-y-4 h-full">
+            <section bind:this={elemChat} class="p-4 overflow-y-auto space-y-4 h-[calc(100vh-12rem)]">
                 {#if isLoading}
                     <div class="flex justify-center items-center h-32">
                         <div class="spinner"></div>
@@ -357,23 +386,36 @@
                                     name="You"
                                     size="size-12"
                                 />
-                            </div>
-                        {:else}
+                        </div>
+                    {:else}
                             <div class="grid grid-cols-[auto_1fr] gap-2">
                                 <SpaceAvatar 
                                     name={currentConversation ? namespaceMap[currentConversation.namespace_id]?.name || `Space ${currentConversation.namespace_id}` : 'AI'}
                                     size="size-12"
                                 />
                                 <div class="p-4 rounded-tl-none space-y-2">
-                                    <header class="flex justify-between items-center">
-                                        <p class="font-bold">{bubble.name}</p>
+                                <header class="flex justify-between items-center">
+                                    <p class="font-bold">
+                                        {bubble.name}
+                                        {#if responseTime !== null && bubble.id === messageFeed.length - 1}
+                                            <span class="text-xs font-normal ml-2 text-surface-600-400">
+                                                Response time: {responseTime < 1000 ? `${responseTime}ms` : `${(responseTime / 1000).toFixed(2)}s`}
+                                            </span>
+                                        {/if}
+                                    </p>
                                         <small class="opacity-50 pl-4">{bubble.timestamp}</small>
-                                    </header>
-                                    <p>{bubble.message}</p>
+                                </header>
+                                <p>{bubble.message}</p>
                                 </div>
-                            </div>
-                        {/if}
-                    {/each}
+                        </div>
+                    {/if}
+                {/each}
+                
+                {#if isWaitingForResponse}
+                    <TypingIndicator 
+                        namespaceName={currentConversation ? namespaceMap[currentConversation.namespace_id]?.name || `Space ${currentConversation.namespace_id}` : 'AI'} 
+                    />
+                {/if}
                 {/if}
             </section>
             <!-- Prompt -->
@@ -400,22 +442,22 @@
                         </a>
                     </div>
                     <div class="input-group grid-cols-[1fr_auto] divide-x divide-surface-200-800 rounded-container-token flex-1">
-                        <textarea
+                    <textarea
                             bind:value={currentMessage}
                             class="bg-transparent border-0 ring-0 py-3 px-4 text-lg h-[72px] resize-none"
-                            name="prompt"
-                            placeholder="Write a message..."
-                            rows="1"
-                            onkeydown={onPromptKeydown}
+                      name="prompt"
+                      placeholder="Write a message..."
+                      rows="1"
+                      onkeydown={onPromptKeydown}
                             disabled={!currentConversation}
-                        ></textarea>
+                    ></textarea>
                         <button 
                             class="input-group-cell {currentMessage ? 'preset-filled-primary-500' : 'preset-tonal'} px-4" 
                             onclick={sendMessage}
                             disabled={!currentConversation}
                         >
                             <IconSend class="size-5" />
-                        </button>
+                    </button>
                     </div>
                 </div>
             </section>
@@ -510,4 +552,42 @@
 </Modal>
 
 <style lang="postcss">
+    .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 8px 0;
+    }
+    
+    .typing-indicator span {
+        width: 8px;
+        height: 8px;
+        background-color: var(--color-surface-500);
+        border-radius: 50%;
+        display: inline-block;
+        animation: typing 1.4s infinite ease-in-out;
+    }
+    
+    .typing-indicator span:nth-child(1) {
+        animation-delay: 0s;
+    }
+    
+    .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    @keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+            opacity: 0.4;
+        }
+        30% {
+            transform: translateY(-4px);
+            opacity: 1;
+        }
+    }
 </style>
