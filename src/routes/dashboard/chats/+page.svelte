@@ -7,7 +7,7 @@
     import type { ToastContext } from '@skeletonlabs/skeleton-svelte';
     import { api } from '$lib/services/api';
     import type { Conversation, ChatMessage, ConversationListItem, Namespace } from '$lib/types/api.types';
-    import { Modal } from '@skeletonlabs/skeleton-svelte';
+    import { Modal, Popover, Progress, ProgressRing } from '@skeletonlabs/skeleton-svelte';
     import IconX from '@lucide/svelte/icons/x';
     import IconTrash from '@lucide/svelte/icons/trash-2';
     import IconMenu from '@lucide/svelte/icons/menu';
@@ -343,8 +343,8 @@
             <!-- List -->
             <div class="p-4 space-y-4 overflow-y-auto flex-1">
                 {#if isLoading}
-                    <div class="flex justify-center items-center h-32">
-                        <div class="spinner"></div>
+                    <div class="flex justify-center items-center h-full w-full">
+                        <ProgressRing value={null} size="size-14"  meterStroke="stroke-primary-600-400" trackStroke="stroke-primary-50-950" />
                     </div>
                 {:else if conversations.length === 0}
                     <div class="text-center text-surface-600-400 ">
@@ -391,8 +391,8 @@
             <!-- Conversation -->
             <section bind:this={elemChat} class="flex-1 p-4 overflow-y-auto space-y-4 min-h-0">
                 {#if isLoading}
-                    <div class="flex justify-center items-center ">
-                        <div class="spinner"></div>
+                    <div class="flex justify-center items-center h-full w-full">
+                        <ProgressRing value={null} size="size-14" meterStroke="stroke-primary-600-400" trackStroke="stroke-primary-50-950" />
                     </div>
                 {:else if !currentConversation}
                     <div class="flex flex-col items-center justify-center h-full space-y-4 text-center">
@@ -514,8 +514,8 @@
                 </div>
                 
                 {#if isLoadingNamespaces}
-                    <div class="flex justify-center items-center h-32">
-                        <div class="spinner"></div>
+                    <div class="flex justify-center items-center h-full w-full">
+                        <ProgressRing value={null} size="size-14" meterStroke="stroke-primary-600-400" trackStroke="stroke-primary-50-950" />
                     </div>
                 {:else if namespaces.length === 0}
                     <div class="card p-6 text-center space-y-4">

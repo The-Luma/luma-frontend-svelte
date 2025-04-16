@@ -3,7 +3,7 @@
     import { onMount } from 'svelte';
     import { getContext } from 'svelte';
     import type { ToastContext } from '@skeletonlabs/skeleton-svelte';
-    import { Modal, FileUpload, Popover, Progress } from '@skeletonlabs/skeleton-svelte';
+    import { Modal, FileUpload, Popover, Progress, ProgressRing } from '@skeletonlabs/skeleton-svelte';
     // Icons
     import IconDropzone from '@lucide/svelte/icons/image-plus';
     import IconFile from '@lucide/svelte/icons/paperclip';
@@ -582,8 +582,8 @@
             </div>
 
             {#if isLoading}
-                <div class="flex justify-center items-center h-32">
-                    <div class="spinner"></div>
+                <div class="flex justify-center items-center h-full w-full">
+                    <ProgressRing value={null} size="size-14" meterStroke="stroke-primary-600-400" trackStroke="stroke-primary-50-950" />
                 </div>
             {:else if namespaces.length === 0 || error}
                 <div class="text-center p-8 text-surface-600-400">
@@ -765,8 +765,8 @@
                             <h4 class="h4">Files ({documents.length})</h4>
                             <div class="card px-4">
                                 {#if isLoadingDocuments}
-                                    <div class="flex justify-center items-center h-32">
-                                        <div class="spinner"></div>
+                                    <div class="flex justify-center items-center h-full w-full">
+                                        <ProgressRing value={null} size="size-14" meterStroke="stroke-primary-600-400" trackStroke="stroke-primary-50-950" />
                                     </div>
                                 {:else if documents.length === 0}
                                     <div class="text-surface-600-400 text-center">
@@ -837,8 +837,8 @@
                             {:else}
                                 <div class="card p-4">
                                     {#if isLoadingUsers}
-                                        <div class="flex justify-center items-center h-32">
-                                            <div class="spinner"></div>
+                                        <div class="flex justify-center items-center h-full w-full">
+                                            <ProgressRing value={null} size="size-14" meterStroke="stroke-primary-600-400" trackStroke="stroke-primary-50-950" />
                                         </div>
                                     {:else if users.length === 0}
                                         <div class="text-surface-600-400 text-center">
@@ -887,8 +887,8 @@
                             <h4 class="h4">Users with Access</h4>
                             <div class="card p-4">
                                 {#if isLoadingAccessList}
-                                    <div class="flex justify-center items-center h-32">
-                                        <div class="spinner"></div>
+                                    <div class="flex justify-center items-center h-full w-full">
+                                        <ProgressRing value={null} size="size-14" meterStroke="stroke-primary-600-400" trackStroke="stroke-primary-50-950" />
                                     </div>
                                 {:else if usersWithAccess.length === 0}
                                     <div class="text-surface-600-400 text-center">
