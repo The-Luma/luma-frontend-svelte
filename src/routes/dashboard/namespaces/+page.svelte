@@ -633,7 +633,7 @@
                 <li>Organize conversations by topic or project</li>
                 <li>Upload and manage files within each space</li>
                 <li>Control access and sharing permissions</li>
-                <li>Customize space settings and appearance</li>
+                <li>Customize space settings</li>
             </ul>
             <h3 class="h3 mb-2">Getting Started:</h3>
             <ol class="list-decimal list-inside space-y-2">

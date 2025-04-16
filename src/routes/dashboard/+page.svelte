@@ -17,11 +17,11 @@
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
             <div class="card variant-ghost-surface p-4">
-                <h2 class="h2">Quick Actions</h2>
+                <h2 class="h2">What you can do</h2>
                 <ul class="space-y-2 mt-2">
-                    <li>• Start a new chat</li>
-                    <li>• Upload files</li>
-                    <li>• Manage namespaces</li>
+                    <li>• Start a new chat with Luma</li>
+                    <li>• Manage spaces</li>
+                    <li>• Upload files to a space </li>
                     <li>• Update profile</li>
                 </ul>
             </div>
