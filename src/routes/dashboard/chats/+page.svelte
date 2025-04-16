@@ -10,6 +10,7 @@
     import { Modal } from '@skeletonlabs/skeleton-svelte';
     import IconX from '@lucide/svelte/icons/x';
     import IconTrash from '@lucide/svelte/icons/trash-2';
+    import IconMenu from '@lucide/svelte/icons/menu';
     import SpaceAvatar from '$lib/components/SpaceAvatar.svelte';
     import TypingIndicator from '$lib/components/TypingIndicator.svelte';
 
@@ -33,6 +34,7 @@
     let isWaitingForResponse = $state(false);
     let responseStartTime = $state<number | null>(null);
     let responseTime = $state<number | null>(null);
+    let showNavigation = $state(true);
 
     interface MessageFeed {
         id: number;
@@ -294,6 +296,10 @@
         }
     }
 
+    function toggleNavigation() {
+        showNavigation = !showNavigation;
+    }
+
     onMount(() => {
         fetchConversations();
         fetchNamespaces();
@@ -310,7 +316,10 @@
 
 <section class="card rounded-container flex flex-row h-[calc(100vh-4rem)]">
         <!-- Navigation -->
-        <div class="flex flex-col border-r-[1px] min-w-[400px] max-w-[400px] border-surface-200-800 h-full overflow-hidden">
+         <div class="flex flex-col border-r-[1px] bg-surface-50-950 z-51 min-w-[400px] max-w-[400px] border-surface-200-800 h-full overflow-hidden transition-all duration-300 ease-in-out
+            {showNavigation ? 'translate-x-0' : '-translate-x-full'} 
+            md:translate-x-0 md:relative md:z-0
+            fixed left-0 z-50">
             <!-- Header -->
             <header class="border-b-[1px] border-surface-200-800 p-4 flex-shrink-0">
                 <div class="flex justify-between items-center">
@@ -341,7 +350,12 @@
                                 class="card p-2 w-full flex items-center space-x-4 {currentConversation?.id === conv.id
                 ? 'preset-filled-primary-500'
                 : 'bg-surface-hover-token'}"
-                                onclick={() => loadChatHistory(conv.id)}
+                                onclick={() => {
+                                    loadChatHistory(conv.id);
+                                    if (window.innerWidth < 768) {
+                                        showNavigation = false;
+                                    }
+                                }}
                             >
                                 <SpaceAvatar 
                                     name={namespaceMap[conv.namespace_id]?.name || `Space ${conv.namespace_id}`}
@@ -359,7 +373,14 @@
             </div>
         </div>
         <!-- Chat -->
-        <div class="flex flex-col flex-1 w-full h-full overflow-hidden">
+        <div class="flex flex-col flex-1 w-full h-full overflow-hidden relative">
+            <!-- Mobile Navigation Toggle -->
+            <button 
+                class="btn-icon bg-surface-50-950 absolute top-4 left-4 z-50 md:hidden"
+                onclick={toggleNavigation}
+            >
+                <IconMenu class="size-5" />
+            </button>
             <!-- Conversation -->
             <section bind:this={elemChat} class="flex-1 p-4 overflow-y-auto space-y-4 min-h-0">
                 {#if isLoading}
