@@ -37,7 +37,7 @@ export interface CreateNamespaceRequest {
 
 export interface ShareNamespaceRequest {
     user_id: number;
-    auth_level: string;
+    auth_level: number;
 }
 
 export interface RevokeNamespaceRequest {

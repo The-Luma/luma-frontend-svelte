@@ -12,6 +12,8 @@
     import IconDownload from '@lucide/svelte/icons/download';
     import IconTrash from '@lucide/svelte/icons/trash-2';
     import type { DocumentListItem } from '$lib/types/api.types';
+    import type { UserResponse } from '$lib/types/auth.types';
+    import { auth } from '$lib/stores/auth';
 
     let ModalOpenState = $state(false);
     let SettingsModalOpenState = $state(false);
@@ -27,6 +29,17 @@
     let uploadProgress = $state<number | null>(null);
     let documents = $state<DocumentListItem[]>([]);
     let isLoadingDocuments = $state(false);
+    let users = $state<UserResponse[]>([]);
+    let isLoadingUsers = $state(false);
+    let selectedUser = $state<UserResponse | null>(null);
+    let isSharing = $state(false);
+    let selectedAuthLevel = $state("1"); // Default to read-only access
+
+    const accessLevels = [
+        { value: "1", label: "Read Only" },
+        { value: "2", label: "Read & Write" },
+        { value: "3", label: "Admin" }
+    ];
 
     function formatDate(dateString: string): string {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -81,12 +94,15 @@
         selectedNamespace = namespace;
         SettingsModalOpenState = true;
         fetchDocuments(namespace.id);
+        fetchUsers();
     }
 
     function closeSettings() {
         selectedNamespace = null;
         SettingsModalOpenState = false;
         documents = [];
+        users = [];
+        selectedUser = null;
     }
 
     async function createNamespace() {
@@ -359,6 +375,68 @@
         }
     }
 
+    async function fetchUsers() {
+        if (!selectedNamespace) return;
+        
+        isLoadingUsers = true;
+        try {
+            const response = await api.admin.listUsers();
+            
+            if (response.error) {
+                throw new Error(response.error);
+            }
+
+            if (response.data) {
+                // Filter out the current user
+                users = response.data.users.filter(user => user.id !== $auth.user?.id);
+            }
+        } catch (err) {
+            console.error('Error fetching users:', err);
+            toast.create({
+                title: 'Error',
+                description: 'Failed to fetch users',
+                type: 'error'
+            });
+        } finally {
+            isLoadingUsers = false;
+        }
+    }
+
+    async function shareNamespace() {
+        if (!selectedUser || !selectedNamespace) return;
+        
+        isSharing = true;
+        try {
+            const response = await api.namespaces.share(selectedNamespace.id, {
+                user_id: selectedUser.id,
+                auth_level: parseInt(selectedAuthLevel) // Convert string to number for API
+            });
+            
+            if (response.error) {
+                throw new Error(response.error);
+            }
+            
+            toast.create({
+                title: 'Success',
+                description: `Space shared with ${selectedUser.username} (${accessLevels.find(level => level.value === selectedAuthLevel)?.label})`,
+                type: 'success'
+            });
+            
+            // Reset selection
+            selectedUser = null;
+            selectedAuthLevel = "1"; // Reset to default
+        } catch (err) {
+            console.error('Error sharing namespace:', err);
+            toast.create({
+                title: 'Error',
+                description: err instanceof Error ? err.message : 'Failed to share space',
+                type: 'error'
+            });
+        } finally {
+            isSharing = false;
+        }
+    }
+
     onMount(() => {
         fetchNamespaces();
     });
@@ -623,9 +701,48 @@
                         <div class="space-y-4">
                             <h4 class="h4">Share Access</h4>
                             <div class="card p-4">
-                                <select class="select w-full">
-                                    <option value="">Search users...</option>
-                                </select>
+                                {#if isLoadingUsers}
+                                    <div class="flex justify-center items-center h-32">
+                                        <div class="spinner"></div>
+                                    </div>
+                                {:else if users.length === 0}
+                                    <div class="text-surface-600-400 text-center">
+                                        No users available to share with
+                                    </div>
+                                {:else}
+                                    <label class="label" for="user">User</label>
+                                    <select 
+                                        class="select w-full" 
+                                        id="user"
+                                        bind:value={selectedUser}
+                                    >
+                                        <option value={null}>Select a user to share with...</option>
+                                        {#each users as user}
+                                            <option value={user}>{user.username} ({user.email})</option>
+                                        {/each}
+                                    </select>
+                                    <div class="mt-2">
+                                        <label class="label" for="authLevel">Access Level</label>
+                                        <select 
+                                            class="select w-full" 
+                                            id="authLevel"
+                                            bind:value={selectedAuthLevel}
+                                        >
+                                            {#each accessLevels as level}
+                                                <option value={level.value}>{level.label}</option>
+                                            {/each}
+                                        </select>
+                                    </div>
+                                    <div class="mt-4 flex justify-end">
+                                        <button 
+                                            class="btn preset-filled-primary-500" 
+                                            disabled={!selectedUser || isSharing}
+                                            onclick={shareNamespace}
+                                        >
+                                            {isSharing ? 'Sharing...' : 'Share'}
+                                        </button>
+                                    </div>
+                                {/if}
                             </div>
                         </div>
 
