@@ -11,6 +11,7 @@
     import IconX from '@lucide/svelte/icons/x';
     import IconTrash from '@lucide/svelte/icons/trash-2';
     import IconMenu from '@lucide/svelte/icons/menu';
+    import IconMessageSquare from '@lucide/svelte/icons/message-square';
     import SpaceAvatar from '$lib/components/SpaceAvatar.svelte';
     import TypingIndicator from '$lib/components/TypingIndicator.svelte';
 
@@ -135,6 +136,8 @@
                     type: 'success'
                 });
                 CreateChatModalOpenState = false;
+                // Refresh the conversations list
+                await fetchConversations();
             }
         } catch (err) {
             console.error('Error starting chat:', err);
@@ -388,11 +391,15 @@
                         <div class="spinner"></div>
                     </div>
                 {:else if !currentConversation}
-                    <div class="text-center text-surface-600-400">
-                        Select a chat or create a new one to start messaging.
+                    <div class="flex flex-col items-center justify-center h-full space-y-4 text-center">
+                        <IconMessageSquare class="size-16 text-surface-400-600" />
+                        <h2 class="h1">Welcome to Luma Chat</h2>
+                        <p class="text-xl text-surface-600-400">
+                            Select a chat or create a new one to start messaging.
+                        </p>
                     </div>
                 {:else if messageFeed.length === 0}
-                    <div class="text-center text-surface-600-400">
+                    <div class="flex items-center justify-center h-full text-surface-600-400">
                         No messages yet. Start the conversation!
                     </div>
                 {:else}
