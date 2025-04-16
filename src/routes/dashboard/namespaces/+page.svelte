@@ -364,7 +364,7 @@
     });
 </script>
 
-<div class="flex-1 flex flex-col w-full h-[calc(100vh-2rem)]">
+<div class="flex-1 flex flex-col w-full overflow-scroll h-[calc(100vh - 160px)]">
     <div class="grid grid-cols-1 md:grid-cols-[65%_35%] gap-4">
         <!-- Left Section - Table -->
         <div class="card w-full h-full p-4">
@@ -423,7 +423,7 @@
         </div>
 
         <!-- Right Section - Explanation -->
-        <div class="card w-full h-full p-4">
+        <div class="card w-full p-4">
             <div class="space-y-6">
                 <h2 class="h2">About Spaces</h2>
                 

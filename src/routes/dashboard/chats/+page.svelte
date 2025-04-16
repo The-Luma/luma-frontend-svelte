@@ -308,15 +308,14 @@
     });
 </script>
 
-<section class="card rounded-container overflow-hidden h-full">
-    <div class="chat w-full h-full grid grid-cols-1 lg:grid-cols-[30%_1fr]">
+<section class="card rounded-container flex flex-row h-[calc(100vh-4rem)]">
         <!-- Navigation -->
-        <div class="hidden lg:grid grid-rows-[auto_1fr_auto] border-r-[1px] border-surface-200-800 h-full">
+        <div class="flex flex-col border-r-[1px] min-w-[400px] max-w-[400px] border-surface-200-800 h-full overflow-hidden">
             <!-- Header -->
-            <header class="border-b-[1px] border-surface-200-800 p-4">
+            <header class="border-b-[1px] border-surface-200-800 p-4 flex-shrink-0">
                 <div class="flex justify-between items-center">
                     <h2 class="h2">Your Chats</h2>
-                    <button 
+                    <button
                         class="btn preset-filled-primary-500"
                         onclick={() => CreateChatModalOpenState = true}
                         disabled={isCreating}
@@ -326,13 +325,13 @@
                 </div>
             </header>
             <!-- List -->
-            <div class="p-4 space-y-4 overflow-y-auto h-full">
+            <div class="p-4 space-y-4 overflow-y-auto flex-1">
                 {#if isLoading}
                     <div class="flex justify-center items-center h-32">
                         <div class="spinner"></div>
                     </div>
                 {:else if conversations.length === 0}
-                    <div class="text-center text-surface-600-400">
+                    <div class="text-center text-surface-600-400 ">
                         No chats yet. Create a new chat to get started.
                     </div>
                 {:else}
@@ -360,11 +359,11 @@
             </div>
         </div>
         <!-- Chat -->
-        <div class="grid grid-rows-[1fr_auto] h-full">
+        <div class="flex flex-col flex-1 w-full h-full overflow-hidden">
             <!-- Conversation -->
-            <section bind:this={elemChat} class="p-4 overflow-y-auto space-y-4 h-[calc(100vh-12rem)]">
+            <section bind:this={elemChat} class="flex-1 p-4 overflow-y-auto space-y-4 min-h-0">
                 {#if isLoading}
-                    <div class="flex justify-center items-center h-32">
+                    <div class="flex justify-center items-center ">
                         <div class="spinner"></div>
                     </div>
                 {:else if !currentConversation}
@@ -380,7 +379,7 @@
                         {#if bubble.host}
                             <div class="grid grid-cols-[1fr_auto] gap-2 justify-items-end">
                                 <div class="card py-1 px-4 rounded-tr-none preset-tonal-secondary flex items-center">
-                                    <p class="text-lg text-center">{bubble.message}</p>
+                                    <p class="text-normal text-center">{bubble.message}</p>
                                 </div>
                                 <SpaceAvatar 
                                     name="You"
@@ -419,7 +418,7 @@
                 {/if}
             </section>
             <!-- Prompt -->
-            <section class="border-t-[1px] border-surface-200-800 p-4">
+            <section class="border-t-[1px] border-surface-200-800 p-4 flex-shrink-0">
                 <div class="flex items-start gap-2">
                     <div class="flex flex-col gap-2">
                         <button 
@@ -462,7 +461,6 @@
                 </div>
             </section>
         </div>
-    </div>
 </section>
 
 <!-- Create Chat Modal -->

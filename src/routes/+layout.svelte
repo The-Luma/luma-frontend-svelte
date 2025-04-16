@@ -136,9 +136,9 @@
 	</div>
 {/if}
 
-<ToastProvider>
+<ToastProvider >
 	{#if $page.url.pathname.startsWith('/dashboard')}
-		<div class="h-full grid grid-rows-[auto_1fr_auto]">
+		<div class="h-full flex flex-col">
 			<!-- Header -->
 			<header class="bg-surface-100-800 border-b border-surface-200-700">
 				<div class="flex items-center justify-between px-4 py-2">
@@ -157,7 +157,7 @@
 			</header>
 
 			<!-- Main Content Area -->
-			<div class="grid grid-cols-[auto_1fr] overflow-hidden">
+			<div class="flex h-full md:flex-row flex-col">
 				<!-- Desktop Navigation Rail -->
 				<div class="hidden md:block">
 					<Navigation.Rail value={currentRoute} onValueChange={handleNavigation}>
@@ -177,23 +177,26 @@
 				</div>
 
 				<!-- Main Content -->
+				<div class="flex-1 h-full">
 					{@render children?.()}
-			
+				</div>
+
+				<div class="md:hidden">
+					<Navigation.Bar value={currentRoute} onValueChange={handleNavigation}>
+						{#each navigationItems as item}
+							<Navigation.Tile id={item.id} label={item.label}>
+								<svelte:component this={item.icon} />
+							</Navigation.Tile>
+						{/each}
+						<Navigation.Tile id={settingsItem.id} label={settingsItem.label}>
+							<svelte:component this={settingsItem.icon} />
+						</Navigation.Tile>
+					</Navigation.Bar>
+				</div>
+
 			</div>
 
-			<!-- Mobile Navigation Bar -->
-			<div class="md:hidden">
-				<Navigation.Bar value={currentRoute} onValueChange={handleNavigation}>
-					{#each navigationItems as item}
-						<Navigation.Tile id={item.id} label={item.label}>
-							<svelte:component this={item.icon} />
-						</Navigation.Tile>
-					{/each}
-					<Navigation.Tile id={settingsItem.id} label={settingsItem.label}>
-						<svelte:component this={settingsItem.icon} />
-					</Navigation.Tile>
-				</Navigation.Bar>
-			</div>
+
 		</div>
 	{:else}
 		<!-- Simple layout for non-dashboard pages -->
