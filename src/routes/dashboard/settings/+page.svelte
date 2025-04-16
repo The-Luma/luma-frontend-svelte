@@ -6,6 +6,7 @@
     import { getContext } from 'svelte';
     import type { ToastContext } from '@skeletonlabs/skeleton-svelte';
     import { api } from '$lib/services/api';
+    import type { InviteUserResponse } from '$lib/services/admin.service';
 
     export const toast: ToastContext = getContext('toast');
 
@@ -30,6 +31,8 @@
     let inviteEmail = $state('');
     let inviteRole = $state('Viewer');
     let isInviting = $state(false);
+    let invitationDetails = $state<InviteUserResponse | null>(null);
+    let invitationSuccessModalState = $state(false);
 
     interface User {
         id: number;
@@ -54,6 +57,11 @@
         inviteModalState = false;
         inviteEmail = '';
         inviteRole = 'Viewer';
+    }
+
+    function invitationSuccessModalClose() {
+        invitationSuccessModalState = false;
+        invitationDetails = null;
     }
 
     onMount(async () => {
@@ -101,33 +109,28 @@
 
         isInviting = true;
         try {
-            const response = await fetch('/api/users/invite', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: inviteEmail,
-                    role: inviteRole
-                })
+            const response = await api.admin.inviteUser({
+                email: inviteEmail,
+                role: inviteRole.toLowerCase()
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to invite user');
+            if (response.error) {
+                throw new Error(response.error);
             }
 
-            toast.create({
-                title: 'Success',
-                description: 'User invited successfully',
-                type: 'success'
-            });
+            if (!response.data) {
+                throw new Error('No response data received');
+            }
+
+            invitationDetails = response.data;
             inviteModalClose();
+            invitationSuccessModalState = true;
             await loadUsers(); // Reload the users list
         } catch (error) {
             console.error('Error inviting user:', error);
             toast.create({
                 title: 'Error',
-                description: 'Failed to invite user. Please try again.',
+                description: error instanceof Error ? error.message : 'Failed to invite user. Please try again.',
                 type: 'error'
             });
         } finally {
@@ -651,6 +654,74 @@
                 {:else}
                     Invite User
                 {/if}
+            </button>
+        </footer>
+    {/snippet}
+</Modal>
+
+<!-- Invitation Success Modal -->
+<Modal
+    open={invitationSuccessModalState}
+    onOpenChange={(e) => (invitationSuccessModalState = e.open)}
+    contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-lg w-[90vw] md:w-[45vw]"
+    backdropClasses="backdrop-blur-sm"
+>
+    {#snippet content()}
+        <header class="flex justify-between">
+            <h2 class="h2">Invitation Sent</h2>
+        </header>
+        <article class="space-y-4">
+            {#if invitationDetails}
+                <div class="space-y-4">
+                    <div class="space-y-2">
+                        <p class="text-sm text-surface-600-400">An invitation has been sent to:</p>
+                        <p class="font-medium">{invitationDetails.email}</p>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <p class="text-sm text-surface-600-400">Role:</p>
+                        <p class="font-medium capitalize">{invitationDetails.role}</p>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <p class="text-sm text-surface-600-400">Invitation Link:</p>
+                        <div class="flex items-center gap-2">
+                            <input
+                                type="text"
+                                class="input flex-1"
+                                value={invitationDetails.invitation_link}
+                                readonly
+                            />
+                            <button
+                                class="btn btn-sm preset-filled"
+                                onclick={() => {
+                                    navigator.clipboard.writeText(invitationDetails.invitation_link);
+                                    toast.create({
+                                        title: 'Success',
+                                        description: 'Invitation link copied to clipboard',
+                                        type: 'success'
+                                    });
+                                }}
+                            >
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <p class="text-sm text-surface-600-400">Expires at:</p>
+                        <p class="font-medium">{new Date(invitationDetails.expires_at).toLocaleString()}</p>
+                    </div>
+                </div>
+            {/if}
+        </article>
+        <footer class="flex justify-end gap-4">
+            <button 
+                type="button" 
+                class="btn preset-filled" 
+                onclick={invitationSuccessModalClose}
+            >
+                Close
             </button>
         </footer>
     {/snippet}

@@ -15,6 +15,22 @@ interface ListUsersResponse {
     offset: number;
 }
 
+interface InviteUserRequest {
+    email: string;
+    role: string;
+}
+
+export interface InviteUserResponse {
+    id: number;
+    email: string;
+    role: string;
+    token: string;
+    invited_by: number;
+    expires_at: string;
+    created_at: string;
+    invitation_link: string;
+}
+
 export class AdminService extends BaseService {
     constructor() {
         super();
@@ -34,5 +50,9 @@ export class AdminService extends BaseService {
 
     async listUsers(): Promise<ApiResponse<ListUsersResponse>> {
         return this.get<ListUsersResponse>(API_CONFIG.endpoints.admin.listUsers);
+    }
+
+    async inviteUser(data: InviteUserRequest): Promise<ApiResponse<InviteUserResponse>> {
+        return this.post<InviteUserResponse>(API_CONFIG.endpoints.admin.invitations, data);
     }
 } 

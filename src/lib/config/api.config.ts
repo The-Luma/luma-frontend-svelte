@@ -24,7 +24,7 @@ export const API_CONFIG = {
             check: '/admin/check',
             users: '/admin/users',
             listUsers: '/users',
-            invitations: '/admin/invitations',
+            invitations: '/invitations',
         },
         health: {
             check: ''
