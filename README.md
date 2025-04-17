@@ -1,38 +1,222 @@
-# create-svelte
+# Luma Frontend
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+[![Svelte](https://img.shields.io/badge/svelte-v5.0.0-orange.svg)](https://svelte.dev/)
+[![SvelteKit](https://img.shields.io/badge/sveltekit-v2.20.1-orange.svg)](https://kit.svelte.dev/)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
 
-## Creating a project
+*A modern, responsive frontend for the Luma document management and chat system built with SvelteKit*
 
-If you're seeing this, you've probably already done this step. Congrats!
+[Getting Started](#getting-started) •
+[Documentation](#documentation) •
+[Features](#features) •
+[Contributing](#contributing) •
+[License](#license)
 
+## Features
+
+- **Modern Authentication System**
+  - Secure JWT-based authentication
+  - Role-based access control
+  - Automatic token refresh
+  - Protected routes
+
+- **Responsive Dashboard**
+  - Desktop and mobile layouts
+  - Dark/Light mode support
+  - Multiple built-in themes
+  - Customizable interface
+
+- **Advanced UI Components**
+  - Chat interface
+  - File management
+  - Namespace organization
+  - User management
+  - Settings configuration
+
+- **Performance Optimized**
+  - Server-side rendering
+  - Client-side navigation
+  - Optimized asset loading
+  - TypeScript support
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v23.9.0 or higher)
+- npm or yarn
+- Docker (optional)
+
+### Quick Start
+
+1. **Clone the repository**
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
+git clone https://github.com/your-org/luma-frontend-svelte.git
+cd luma-frontend-svelte
 
-# create a new project in my-app
-npm create svelte@latest my-app
+2. **Set up environment variables**
+```bash
+cp .env.example .env
+# Edit .env with your configuration
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
+3. **Install and run**
 ```bash
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
+# Build for production
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+### Docker Setup
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+```bash
+# Build and run with Docker
+docker build -t luma-frontend .
+docker run -p 5173:5173 --env-file .env luma-frontend
+
+# Or using Docker Compose
+docker-compose up
+```
+
+## Documentation
+
+Detailed documentation is available in the [docs](docs/) directory:
+
+- [User Guide](docs/user-guide.md)
+- [Component Library](docs/components.md)
+- [Development Guide](docs/development.md)
+- [Deployment Guide](docs/deployment.md)
+
+### Basic Configuration
+
+Create a `.env` file with the following:
+
+```env
+# Docker Network
+DOCKER_NETWORK_NAME=
+
+# Frontend Configuration
+FRONTEND_PORT=
+FRONTEND_URL=
+VITE_API_URL=
+FRONTEND_API_URL=
+```
+
+## Development
+
+### Project Structure
+
+```
+luma-frontend-svelte/
+├── src/
+│   ├── lib/                     # Shared library code
+│   │   ├── components/             # Reusable UI components
+│   │   ├── services/               # API and service integrations
+│   │   ├── stores/                 # Svelte stores (state management)
+│   │   ├── types/                  # TypeScript type definitions
+│   │   ├── utils/                  # Utility functions
+│   │   ├── config/                 # App configuration
+│   │   ├── assets/                 # Static assets
+│   │   └── index.ts                # Library exports
+│   └── routes/                  # SvelteKit routes
+│       ├── +layout.svelte          # Root layout
+│       ├── +page.svelte            # Home page
+│       ├── +error.svelte           # Error page
+│       ├── login/                  # Authentication routes
+│       ├── register/               # User registration
+│       ├── dashboard/              # Main application
+            ├── chats/                  # Chat interface
+            ├── namespaces/             # Space management
+            └── settings/               # Application settings
+│       ├── admin-setup/          # Admin configuration
+│       └── backend-down/         # Error handling
+├── package.json             # NPM dependencies
+├── Dockerfile               # Docker build configuration
+└── docker-compose.yaml      # Docker services configuration
+```
+
+### Available Scripts
+
+```bash
+# Development
+npm run dev         # Start development server
+npm run build       # Build for production
+```
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## Component Examples
+
+### Authentication Form
+
+```svelte
+<script lang="ts">
+  import { auth } from '$lib/stores/auth';
+  
+  let username = '';
+  let password = '';
+  
+  async function handleLogin() {
+    await auth.login({ username, password });
+  }
+</script>
+
+<form on:submit|preventDefault={handleLogin}>
+  <input bind:value={username} type="text" placeholder="Username" />
+  <input bind:value={password} type="password" placeholder="Password" />
+  <button type="submit">Login</button>
+</form>
+```
+
+## Configuration Options
+
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| FRONTEND_PORT | Server port | No | 5173 |
+| VITE_API_URL | Backend API URL | Yes | - |
+| DEFAULT_THEME | UI theme | No | skeleton |
+| ENABLE_DARK_MODE | Dark mode support | No | true |
+
+## License
+
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). This means:
+
+### What you can do:
+- Use the software for any purpose
+- Study how the software works and modify it
+- Redistribute the software
+- Make commercial use of the software
+- Distribute modified versions of the software
+
+### What you must do:
+- Make source code available when you distribute the software
+- Include a copy of the AGPL-3.0 license with the code
+- Indicate significant changes made to the software
+- Disclose source code when running a modified version on a server
+
+### Important Notes:
+- If you modify and use this software on a network server, you MUST make the complete source code available to users who interact with the server
+- All derivative works must also be licensed under AGPL-3.0
+- Including this software in a larger program may require the entire program to be licensed under AGPL-3.0
+
+For the full license text, see the [LICENSE](LICENSE) file or visit [GNU AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.en.html).
+
+<div align="center">
+
+[Report Bug](https://github.com/your-org/luma-frontend-svelte/issues) • [Request Feature](https://github.com/your-org/luma-frontend-svelte/issues)
+
+</div>
