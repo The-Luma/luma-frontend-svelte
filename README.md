@@ -147,16 +147,6 @@ luma-frontend-svelte/
 # Development
 npm run dev         # Start development server
 npm run build       # Build for production
-npm run preview     # Preview production build
-
-# Quality Checks
-npm run check       # Run type checking
-npm run lint        # Check code formatting
-npm run format      # Format code
-
-# Testing (when configured)
-npm run test        # Run tests
-npm run test:watch  # Watch mode
 ```
 
 ## Contributing
@@ -224,31 +214,6 @@ This project is licensed under the GNU Affero General Public License v3.0 (AGPL-
 - Including this software in a larger program may require the entire program to be licensed under AGPL-3.0
 
 For the full license text, see the [LICENSE](LICENSE) file or visit [GNU AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.en.html).
-
-## Deployment
-
-### Production Checklist
-
--  Set secure environment variables
--  Configure HTTPS
--  Optimize asset bundling
--  Enable SSR (if needed)
--  Configure CDN
--  Set up monitoring
--  Review security settings
-
-## Status
-
-- ✅ Core Features
-<!-- - ✅ Authentication System -->
-- ✅ Dashboard Interface
-- ✅ Theme System
-- ✅ File Management
-- ✅ Real-time Chat
-<!-- - 🟡 Advanced Analytics (In Progress) -->
-<!-- - 🟡 Offline Support (Planned) -->
-
----
 
 <div align="center">
 
