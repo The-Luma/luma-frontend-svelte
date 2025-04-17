@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Luma Frontend
+=======
+# create-svelte-app-for-Luma
+>>>>>>> 678528550e0adb83d93b2a6bcce725929eb03199
 
 [![Svelte](https://img.shields.io/badge/svelte-v5.0.0-orange.svg)](https://svelte.dev/)
 [![SvelteKit](https://img.shields.io/badge/sveltekit-v2.20.1-orange.svg)](https://kit.svelte.dev/)
@@ -7,6 +11,7 @@
 
 *A modern, responsive frontend for the Luma document management and chat system built with SvelteKit*
 
+<<<<<<< HEAD
 [Getting Started](#getting-started) •
 [Documentation](#documentation) •
 [Features](#features) •
@@ -54,6 +59,23 @@
 ```bash
 git clone https://github.com/your-org/luma-frontend-svelte.git
 cd luma-frontend-svelte
+=======
+If you're seeing this, you've probably already done this step. Congrats!
+\
+\
+To install all the packages run the following bash commands
+```bash
+npm install \
+  @lucide/svelte@0.488.0 \
+  @skeletonlabs/skeleton-svelte@1.0.0 \
+  @sveltejs/adapter-node@5.2.12 \
+  @sveltejs/kit@2.20.1 \
+  @sveltejs/vite-plugin-svelte@4.0.4 \
+  lucide-svelte@0.484.0 \
+  prettier-plugin-svelte@3.3.3 \
+  svelte-check@4.1.5 \
+  svelte@5.23.2
+>>>>>>> 678528550e0adb83d93b2a6bcce725929eb03199
 ```
 
 2. **Set up environment variables**
