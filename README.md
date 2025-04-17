@@ -113,20 +113,32 @@ FRONTEND_API_URL=
 ### Project Structure
 
 ```
-src/
-├── lib/            # Shared libraries
-│   ├── components/ # Reusable components
-│   ├── services/   # API services
-│   ├── stores/     # Svelte stores
-│   ├── types/      # TypeScript types
-│   └── utils/      # Utility functions
-├── routes/         # SvelteKit routes
-│   ├── login/      # Authentication pages
-│   ├── dashboard/  # Main application
-│   └── admin/      # Admin interface
-├── static/         # Static assets
-├── app.html        # HTML template
-└── app.css         # Global styles
+luma-frontend-svelte/
+├── src/
+│   ├── lib/                     # Shared library code
+│   │   ├── components/             # Reusable UI components
+│   │   ├── services/               # API and service integrations
+│   │   ├── stores/                 # Svelte stores (state management)
+│   │   ├── types/                  # TypeScript type definitions
+│   │   ├── utils/                  # Utility functions
+│   │   ├── config/                 # App configuration
+│   │   ├── assets/                 # Static assets
+│   │   └── index.ts                # Library exports
+│   └── routes/                  # SvelteKit routes
+│       ├── +layout.svelte          # Root layout
+│       ├── +page.svelte            # Home page
+│       ├── +error.svelte           # Error page
+│       ├── login/                  # Authentication routes
+│       ├── register/               # User registration
+│       ├── dashboard/              # Main application
+            ├── chats/                  # Chat interface
+            ├── namespaces/             # Space management
+            └── settings/               # Application settings
+│       ├── admin-setup/          # Admin configuration
+│       └── backend-down/         # Error handling
+├── package.json             # NPM dependencies
+├── Dockerfile               # Docker build configuration
+└── docker-compose.yaml      # Docker services configuration
 ```
 
 ### Available Scripts
