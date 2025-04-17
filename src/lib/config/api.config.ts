@@ -36,6 +36,8 @@ export const API_CONFIG = {
             delete: '/namespaces/:id',
             share: '/namespaces/:id/share',
             revoke: '/namespaces/:id/revoke',
+            access: '/namespaces/:id/access',
+            accessLevel: '/namespaces/:id/access-level',
         },
         chats: {
             start: '/chat/start',

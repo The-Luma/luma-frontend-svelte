@@ -1,3 +1,5 @@
+import type { UserResponse } from './auth.types';
+
 export interface ApiResponse<T> {
     data?: T;
     error?: string;
@@ -37,11 +39,17 @@ export interface CreateNamespaceRequest {
 
 export interface ShareNamespaceRequest {
     user_id: number;
-    auth_level: string;
+    auth_level: number;
 }
 
 export interface RevokeNamespaceRequest {
     user_id: number;
+}
+
+export interface NamespaceAccessResponse {
+    user: UserResponse;
+    auth_level: number;
+    granted_at: string;
 }
 
 // Chat Types
