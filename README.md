@@ -98,16 +98,14 @@ Detailed documentation is available in the [docs](docs/) directory:
 Create a `.env` file with the following:
 
 ```env
+# Docker Network
+DOCKER_NETWORK_NAME=
+
 # Frontend Configuration
-FRONTEND_PORT=5173
-FRONTEND_URL=http://localhost:5173
-
-# Backend Configuration
-VITE_API_URL=http://localhost:8000
-
-# Theme Configuration
-DEFAULT_THEME=skeleton
-ENABLE_DARK_MODE=true
+FRONTEND_PORT=
+FRONTEND_URL=
+VITE_API_URL=
+FRONTEND_API_URL=
 ```
 
 ## Development
